@@ -22,7 +22,14 @@ module.exports = function(grunt) {
             },
             application: {
                 files: {
-                    src: ['app/**/*.js']
+                    src: [
+                        'app/tests/mock/**/*.js',
+                        'app/tests/spec/**/*.js',
+                        'app/config/**/*.js',
+                        'app/libs/**/*.js',
+                        'app/models/**/*.js',
+                        'app/routes/**/*.js'
+                    ]
                 }
             }
         }

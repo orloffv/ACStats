@@ -1,6 +1,6 @@
 (function () {
     "use strict";
-    var mongodbFs = require('mongodb-fs');
+    var mongodbFs = require('../libs/mongodb-fs');
     var path = require('path');
     var collections = {};
     collections.events = require('./event');
