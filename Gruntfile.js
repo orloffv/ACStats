@@ -3,12 +3,16 @@ module.exports = function(grunt) {
     grunt.initConfig({
 
         pkg: grunt.file.readJSON('package.json'),
-        jasmine: {
-            source: {
+        mochacli: {
+            options: {
+                require: ['should'],
+                files: 'app/tests/spec/**/*.js',
+                timeout: 30000,
+                ui: 'bdd'
+            },
+            spec: {
                 options: {
-                    specs: 'app/tests/spec/**/*.js',
-                    template: 'app/tests/grunt.html',
-                    timeout: 30000
+                    reporter: 'dot'
                 }
             }
         },
@@ -17,8 +21,6 @@ module.exports = function(grunt) {
                 jshintrc: '.jshintrc'
             },
             application: {
-                options: {
-                },
                 files: {
                     src: ['app/**/*.js']
                 }
@@ -27,11 +29,11 @@ module.exports = function(grunt) {
     });
 
     //Загрузка модулей, которые предварительно установлены
-    grunt.loadNpmTasks('grunt-contrib-jasmine');
+    grunt.loadNpmTasks('grunt-mocha-cli');
     grunt.loadNpmTasks('grunt-contrib-jshint');
 
     //Эти задания будут выполнятся сразу же когда вы в консоли напечатание grunt, и нажмете Enter
-    grunt.registerTask('tests', ['jshint', 'jasmine']);
+    grunt.registerTask('tests', ['mochacli']);
 
     grunt.registerTask('default', function() {
         var _tasks, tasks, table;

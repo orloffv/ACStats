@@ -3,26 +3,26 @@
     var mongoose    = require('mongoose');
     var log         = require('./log')(module);
     var config      = require('./config');
+    var modelsEvent = require('../models/event');
 
-    mongoose.connect(config.get('mongoose:uri'));
-    var db = mongoose.connection;
+    module.exports.EventModel = modelsEvent;
+    module.exports.connect = function(uri, callback) {
+        if (typeof uri === 'function') {
+            callback = uri;
+            uri = null;
+        }
 
-    db.on('error', function (err) {
-        log.error('connection error:', err.message);
-    });
-    db.once('open', function callback () {
-        log.info("Connected to DB!");
-    });
+        mongoose.connect(uri || config.get('mongoose:uri'), callback);
+        var db = mongoose.connection;
 
-    var Schema = mongoose.Schema;
+        db.on('error', function (err) {
+            log.error('connection error:', err.message);
+            process.exit(1);
+        });
+        db.once('open', function callback () {});
+    };
 
-    var Action = new Schema({
-        title: { type: String, required: true },
-        env: { type: String, required: true },
-        createdAt: { type: Date, default: Date.now }
-    });
-
-    var ActionModel = mongoose.model('Action', Action);
-
-    module.exports.ActionModel = ActionModel;
+    module.exports.disconnect = function(callback) {
+        mongoose.disconnect(callback);
+    };
 })();

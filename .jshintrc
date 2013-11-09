@@ -89,6 +89,7 @@
         //jasmine
         "describe"  : false,
         "it"        : false,
-        "expect"     : false
+        "expect"    : false,
+        "process"   : false
     }
 }
