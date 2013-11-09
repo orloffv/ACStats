@@ -90,6 +90,9 @@
         "describe"  : false,
         "it"        : false,
         "expect"    : false,
-        "process"   : false
+        "process"   : false,
+        "beforeEach": false,
+        "afterEach" : false,
+        "__dirname" : false
     }
 }

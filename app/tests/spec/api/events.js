@@ -4,11 +4,13 @@
     var mongodbFs = require('../../mock/mongodbfs');
     var mongoose = require('mongoose');
     var app = require('../../../app');
+    var config      = require('../../../libs/config');
+    config.set('mongoose:uri', 'mongodb://localhost:27027/ACStats');
 
     describe('API Events', function() {
         beforeEach(function(done) {
             mongodbFs.start(function() {
-                app.get('mongoose').connect('mongodb://localhost:27027/ACStats', done);
+                app.get('mongoose').connect(done);
             });
         });
 

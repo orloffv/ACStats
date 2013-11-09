@@ -6,13 +6,8 @@
     var modelsEvent = require('../models/event');
 
     module.exports.EventModel = modelsEvent;
-    module.exports.connect = function(uri, callback) {
-        if (typeof uri === 'function') {
-            callback = uri;
-            uri = null;
-        }
-
-        mongoose.connect(uri || config.get('mongoose:uri'), callback);
+    module.exports.connect = function(callback) {
+        mongoose.connect(config.get('mongoose:uri'), callback);
         var db = mongoose.connection;
 
         db.on('error', function (err) {

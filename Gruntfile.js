@@ -33,7 +33,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-jshint');
 
     //Эти задания будут выполнятся сразу же когда вы в консоли напечатание grunt, и нажмете Enter
-    grunt.registerTask('tests', ['mochacli']);
+    grunt.registerTask('tests', ['jshint', 'mochacli']);
 
     grunt.registerTask('default', function() {
         var _tasks, tasks, table;

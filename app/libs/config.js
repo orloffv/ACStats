@@ -4,6 +4,6 @@
 
     nconf.argv()
         .env()
-        .file({ file: './app/config/config.json' });
+        .file({ file: __dirname + '/../config/config.json' });
     module.exports = nconf;
 })();
