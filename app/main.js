@@ -3,7 +3,6 @@
     var express = require('express');
     var routes = require('./routes');
     var routesEvent = require('./routes/event');
-    var path = require('path');
     var log = require('./libs/log')(module);
     var config = require('./libs/config');
     var mongoose = require('./libs/mongoose');
