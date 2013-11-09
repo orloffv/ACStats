@@ -39,8 +39,8 @@
 
         event.save(function (err) {
             if (!err) {
-                log.info("event created");
-                return res.send({ status: 'OK', event:event });
+                res.statusCode = 201;
+                return res.send({ id: event._id });
             } else {
                 if(err.name === 'ValidationError') {
                     res.statusCode = 400;

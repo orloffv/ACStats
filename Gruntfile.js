@@ -12,7 +12,7 @@ module.exports = function(grunt) {
             },
             spec: {
                 options: {
-                    reporter: 'dot'
+                    reporter: 'spec'
                 }
             }
         },
