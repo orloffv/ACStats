@@ -12,10 +12,6 @@
                     colorize:   true,
                     level:      'debug',
                     label:      path
-                }),
-                new winston.transports.File({
-                    filename: config.get('log:file'),
-                    level: 'warn'
                 })
             ]
         });
