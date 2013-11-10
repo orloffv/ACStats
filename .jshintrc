@@ -93,6 +93,9 @@
         "process"   : false,
         "beforeEach": false,
         "afterEach" : false,
-        "__dirname" : false
+        "__dirname" : false,
+        "before"    : false,
+        "after"     : false,
+        "xit"       : false
     }
 }

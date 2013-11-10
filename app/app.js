@@ -1,4 +1,6 @@
 (function () {
     "use strict";
-    module.exports = require('./main');
+    module.exports = function(mongoose) {
+        return require('./main')(mongoose);
+    };
 })();

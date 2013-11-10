@@ -1,7 +1,9 @@
 (function () {
     "use strict";
     var http = require('http');
-    var app = require('./app');
+    var Mongoose = require('mongoose').Mongoose;
+    var mongoose = new Mongoose();
+    var app = require('./app')(mongoose);
     var port = process.env.PORT || app.get('port');
 
     http.createServer(app).listen(port, function() {
