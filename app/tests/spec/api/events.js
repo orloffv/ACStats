@@ -1,13 +1,12 @@
 (function () {
     "use strict";
     var request = require('supertest');
-    var config      = require('../../../libs/config');
     var assert = require('assert');
     var mockgoose = require('mockgoose');
     var Mongoose = require('mongoose').Mongoose;
     var mongoose = new Mongoose();
     mockgoose(mongoose);
-    var app = require('../../../app')(mongoose);
+    var app = require('../../../app')(mongoose, 'testing');
     var exampleEvent = {
         environment: 'prod',
         project: 'first profject',
@@ -36,7 +35,7 @@
     };
 
     before(function(done) {
-        mongoose.connect('mongodb://localhost:27017/ACStats', done);
+        mongoose.connect(app.get('config').get('mongoose:uri'), done);
     });
 
     after(function(done) {

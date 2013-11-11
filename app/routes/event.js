@@ -13,7 +13,7 @@
                         return res.send(screen(events, EventModel.screens.collection));
                     } else {
                         res.statusCode = 500;
-                        log.error('Internal error(%d): %s',res.statusCode,err.message);
+                        log.error('Internal error(%d): %s', res.statusCode, err.message);
                         return res.send({ error: 'Server error' });
                     }
                 });
@@ -29,7 +29,7 @@
                         return res.send(screen(event, EventModel.screens.model));
                     } else {
                         res.statusCode = 500;
-                        log.error('Internal error(%d): %s', res.statusCode,err.message);
+                        log.error('Internal error(%d): %s', res.statusCode, err.message);
                         return res.send({ error: 'Server error' });
                     }
                 });
@@ -53,12 +53,12 @@
                         } else {
                             if(err.name === 'ValidationError') {
                                 res.statusCode = 400;
-                                res.send({ errors: errorHelper(err)});
+                                return res.send({ errors: errorHelper(err)});
                             } else {
                                 res.statusCode = 500;
-                                res.send({ error: 'Server error' });
+                                log.error('Internal error(%d): %s', res.statusCode, err.message);
+                                return res.send({ error: 'Server error' });
                             }
-                            log.error('Internal error(%d): %s',res.statusCode,err.message);
                         }
                     });
                 } else if (_.size(events)) {
@@ -72,9 +72,9 @@
                                 res.send({ errors: errorHelper(err)});
                             } else {
                                 res.statusCode = 500;
-                                res.send({ error: 'Server error' });
+                                log.error('Internal error(%d): %s', res.statusCode, err.message);
+                                return res.send({ error: 'Server error' });
                             }
-                            log.error('Internal error(%d): %s',res.statusCode,err.message);
                         }
                     });
                 } else {

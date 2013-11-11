@@ -1,10 +1,18 @@
 (function () {
     "use strict";
-    var nconf = require('nconf');
-    var path = require('path');
+    module.exports = function(environement) {
 
-    nconf.argv()
-        .env()
-        .file({ file: path.normalize(__dirname + '/../config/config.json') });
-    module.exports = nconf;
+        var nconf = require('nconf');
+        var path = require('path');
+
+        nconf.argv().env();
+
+        nconf.overrides({
+            environment: environement ? environement : (nconf.get('NODE_ENV') ? nconf.get('NODE_ENV') : 'development')
+        });
+
+        nconf.file({ file: path.normalize(__dirname + '/../config/' + nconf.get('environment') + '.json') });
+
+        return nconf;
+    };
 })();
