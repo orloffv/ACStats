@@ -19,6 +19,36 @@
 
         var EventModel = mongoose.model('Event', Event);
 
+        var screenModel = {
+            id: true,
+            title: true,
+            createdAt: true,
+            environment: true,
+            project: true,
+            user: {
+                id: true,
+                traits: true,
+                context: true
+            },
+            context: true,
+            traits: true
+        };
+
+        EventModel.screens = {
+            model: screenModel,
+            collection: [
+                screenModel
+            ],
+            postModel: {
+                id: true
+            },
+            postCollection: [
+                {
+                    id: true
+                }
+            ]
+        };
+
         return EventModel;
     };
 })();

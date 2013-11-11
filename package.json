@@ -12,7 +12,9 @@
     "mongoose": "~3.8.0",
     "winston": "~0.7.2",
     "nconf": "~0.6.8",
-    "underscore": "~1.5.2"
+    "underscore": "~1.5.2",
+    "mongoose-error-helper": "0.0.2",
+    "screener": "0.0.7"
   },
   "devDependencies": {
     "grunt": "~0.4.1",

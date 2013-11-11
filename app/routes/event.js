@@ -1,14 +1,16 @@
 (function () {
     "use strict";
-    module.exports = function(EventModel) {
-        var log        = require('../libs/log')(module);
+    module.exports = function(app, mongoose, log) {
         var _          = require('underscore');
+        var EventModel = mongoose.model('Event');
+        var errorHelper = require('mongoose-error-helper').errorHelper;
+        var screen = require('screener').screen;
 
-        return {
+        var routes = {
             list: function(req, res){
                 return EventModel.find(function (err, events) {
                     if (!err) {
-                        return res.send(events);
+                        return res.send(screen(events, EventModel.screens.collection));
                     } else {
                         res.statusCode = 500;
                         log.error('Internal error(%d): %s',res.statusCode,err.message);
@@ -24,49 +26,34 @@
                     }
 
                     if (!err) {
-                        return res.send(event);
+                        return res.send(screen(event, EventModel.screens.model));
                     } else {
                         res.statusCode = 500;
-                        log.error('Internal error(%d): %s',res.statusCode,err.message);
+                        log.error('Internal error(%d): %s', res.statusCode,err.message);
                         return res.send({ error: 'Server error' });
                     }
                 });
             },
             post: function(req, res) {
-                var getEventObject = function(body) {
-                    return {
-                        title: body.event.title,
-                        environment: body.environment,
-                        project: body.project,
-                        context: body.event.context,
-                        traits: body.traits,
-                        user: {
-                            id: body.user.id,
-                            traits: body.user.traits,
-                            context: body.user.context
-                        }
-                    };
-                };
-
-                var event, events;
+                var event, events = [];
 
                 if (_.isArray(req.body)) {
                     events = _.map(req.body, function(object) {
-                        return getEventObject(object);
+                        return object;
                     });
                 } else {
-                    event = getEventObject(req.body);
+                    event = req.body;
                 }
 
                 if (event) {
                     new EventModel(event).save(function (err, event) {
                         if (!err) {
                             res.statusCode = 201;
-                            return res.send({ id: event._id });
+                            return res.send(screen(event, EventModel.screens.postModel));
                         } else {
                             if(err.name === 'ValidationError') {
                                 res.statusCode = 400;
-                                res.send({ error: 'Validation error' });
+                                res.send({ errors: errorHelper(err)});
                             } else {
                                 res.statusCode = 500;
                                 res.send({ error: 'Server error' });
@@ -74,21 +61,15 @@
                             log.error('Internal error(%d): %s',res.statusCode,err.message);
                         }
                     });
-                } else if (events) {
+                } else if (_.size(events)) {
                     EventModel.create(events, function(err) {
                         if (!err) {
-                            var ids =
-                                _.chain(arguments)
-                                    .rest()
-                                    .map(function(model) {return {id: model._id};})
-                                    .value();
-
                             res.statusCode = 201;
-                            return res.send(ids);
+                            return res.send(screen(_.rest(arguments), EventModel.screens.postCollection));
                         } else {
                             if(err.name === 'ValidationError') {
                                 res.statusCode = 400;
-                                res.send({ error: 'Validation error' });
+                                res.send({ errors: errorHelper(err)});
                             } else {
                                 res.statusCode = 500;
                                 res.send({ error: 'Server error' });
@@ -98,7 +79,11 @@
                     });
                 } else {
                     res.statusCode = 400;
-                    return res.send({ error: 'Server error' });
+                    if (!_.size(events)) {
+                        res.send({ error: 'Empty request' });
+                    } else {
+                        return res.send({ error: 'Server error' });
+                    }
                 }
             },
             delete: function(req, res) {
@@ -108,5 +93,11 @@
 
             }
         };
+
+        app.get('/api/events', routes.list);
+        app.post('/api/events', routes.post);
+        app.get('/api/events/:id', routes.get);
+        app.put('/api/events/:id', routes.put);
+        app.delete('/api/events/:id', routes.delete);
     };
 })();

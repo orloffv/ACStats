@@ -11,6 +11,11 @@
     var exampleEvent = {
         environment: 'prod',
         project: 'first profject',
+        title: 'Create Event',
+        context: {
+            where: 'applicants',
+            upTime: '102499'
+        },
         user: {
             id: '128df8234',
             traits: {
@@ -21,13 +26,6 @@
             },
             context: {
                 subscriptionPlan: 'Free'
-            }
-        },
-        event: {
-            title: 'Create Event',
-            context: {
-                where: 'applicants',
-                upTime: '102499'
             }
         },
         traits: {
@@ -131,7 +129,7 @@
                                 return done(err);
                             }
                             assert(res.body.length === 2);
-                            assert(res.body[0].title === exampleEvent.event.title);
+                            assert(res.body[0].title === exampleEvent.title);
                             done();
                         });
                 });
@@ -154,18 +152,88 @@
                             if (err) {
                                 return done(err);
                             }
-                            assert(res.body.title === exampleEvent.event.title);
+                            assert(res.body.title === exampleEvent.title);
                             done();
                         });
+                });
+        });
+
+        it('POST /api/events empty [] request should contain Bad Request', function (done) {
+            request(app)
+                .post('/api/events')
+                .send([])
+                .expect(400)
+                .expect({ error: 'Empty request' })
+                .end(function(err, res) {
+                    if (err) {
+                        return done(err);
+                    }
+                    done();
+                });
+        });
+
+        it('POST /api/events empty [{}] request should contain Bad Request', function (done) {
+            request(app)
+                .post('/api/events')
+                .send([{}])
+                .expect(400)
+                .end(function(err, res) {
+                    assert(res.body.errors);
+
+                    if (err) {
+                        return done(err);
+                    }
+                    done();
+                });
+        });
+
+        it('POST /api/events empty [{}, {}] request should contain Bad Request', function (done) {
+            request(app)
+                .post('/api/events')
+                .send([{}, {}])
+                .expect(400)
+                .end(function(err, res) {
+                    assert(res.body.errors);
+
+                    if (err) {
+                        return done(err);
+                    }
+                    done();
+                });
+        });
+
+        it('POST /api/events empty {} request should contain Bad Request', function (done) {
+            request(app)
+                .post('/api/events')
+                .send({})
+                .expect(400)
+                .end(function(err, res) {
+                    if (err) {
+                        return done(err);
+                    }
+
+                    assert(res.body.errors);
+                    done();
+                });
+        });
+
+        it('POST /api/events empty request should contain Bad Request', function (done) {
+            request(app)
+                .post('/api/events')
+                .send()
+                .expect(400)
+                .end(function(err, res) {
+                    if (err) {
+                        return done(err);
+                    }
+
+                    assert(res.body.errors);
+                    done();
                 });
         });
     });
 
     process.on('exit', function () {
-        //if (mongodbFs.isRunning()) {
-        mongoose.disconnect(function (err) {
-            //mongodbFs.stop();
-        });
-        //}
+        mongoose.disconnect();
     });
 })();

@@ -1,9 +1,8 @@
 (function () {
     "use strict";
     var winston = require('winston');
-    var config = require('./config');
 
-    function getLogger(module) {
+    function getLogger(module, config) {
         var path = module.filename.split('/').slice(-2).join('/'); //отобразим метку с именем файла, который выводит сообщение
 
         return new winston.Logger({

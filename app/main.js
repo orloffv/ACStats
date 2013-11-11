@@ -2,11 +2,10 @@
     "use strict";
     module.exports = function(mongoose) {
         var express = require('express');
-        var routes = require('./routes');
-        var mongooseLib = require('./libs/mongoose')(mongoose);
-        var routesEvent = require('./routes/event')(mongooseLib.EventModel);
-        var log = require('./libs/log')(module);
         var config = require('./libs/config');
+        var log = require('./libs/log')(module, config);
+
+        mongoose = require('./libs/mongoose')(mongoose, log, config);
 
         var allowCrossDomain = function(req, res, next) {
             res.header("Access-Control-Allow-Origin", "*");
@@ -41,14 +40,11 @@
             return;
         });
 
-        app.get('/', routes.index);
+        require('./routes/event')(app, mongoose, log);
+        require('./routes/index')(app, mongoose, log);
 
-        app.get('/api/events', routesEvent.list);
-        app.post('/api/events', routesEvent.post);
-        app.get('/api/events/:id', routesEvent.get);
-        app.put('/api/events/:id', routesEvent.put);
-        app.delete('/api/events/:id', routesEvent.delete);
-        app.set('mongoose', mongooseLib);
+        app.set('mongoose', mongoose);
+
         return app;
-    }
+    };
 })();

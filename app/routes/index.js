@@ -1,6 +1,12 @@
 (function () {
     "use strict";
-    exports.index = function(req, res){
-        res.send('see /api/events');
+    module.exports = function(app, mongoose, log) {
+        var routes = {
+            index: function(req, res) {
+                res.send('see /api/events');
+            }
+        };
+
+        app.get('/', routes.index);
     };
 })();
