@@ -41,10 +41,17 @@
         });
 
         app.use(function(err, req, res, next) {
-            res.status(err.status || 500);
-            log.error('Internal error(%d): %s', res.statusCode, err.message);
+            log.error('Internal error(%d): %s', res.statusCode, err.message, err);
 
-            return res.send({ error: 'Server error' });
+            if (err.message === 'invalid json') {
+                res.status(400);
+
+                return res.send({ error: 'Bad Request' });
+            } else {
+                res.status(500);
+
+                return res.send({ error: 'Server error' });
+            }
         });
 
         require('./routes/event')(app, mongoose, log);

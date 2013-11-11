@@ -17,6 +17,47 @@
             }
         });
 
+        Event.statics.findAllProjects = function(callback) {
+            return this.aggregate(
+                {
+                    $group: {
+                        _id: '$project',
+                        count: { $sum: 1 },
+                        environments: { $addToSet: "$environment" }
+                    }
+                },
+                callback);
+        };
+
+        Event.statics.findGrouped = function(project, environment, callback) {
+            var match = {};
+            if (project) {
+                match.project = project;
+            }
+
+            if (environment) {
+                match.environment = environment;
+            }
+            return this.
+                aggregate(
+                {
+                    $match: match
+                },
+                {
+                    $group: {
+                        _id: '$title',
+                        count: { $sum: 1 },
+                        createdAt: {$first: "$createdAt"},
+                        lastAt: {$last: "$createdAt"},
+                        users: { $addToSet: "$user.id" },
+                        companies: { $addToSet: "$user.traits.companyId" }
+                    }
+                },
+                {
+                    $sort: { count: -1 }
+                }, callback);
+        };
+
         var EventModel = mongoose.model('Event', Event);
 
         var screenModel = {
