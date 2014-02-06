@@ -41,8 +41,9 @@
     });
 
     after(function(done) {
-        mongoose.dropAllCollections(done);
-        mongoose.disconnect(done);
+        mongoose.dropAllCollections(function() {
+            mongoose.disconnect(done);
+        });
     });
 
     describe('API Events', function() {
