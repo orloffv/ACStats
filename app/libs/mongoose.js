@@ -36,6 +36,9 @@
         };
 
         require('../models/event')(mongoose);
+        require('../models/server')(mongoose);
+        require('../models/user')(mongoose);
+        require('../models/hit')(mongoose);
 
         return mongoose;
     };

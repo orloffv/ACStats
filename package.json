@@ -15,7 +15,8 @@
     "underscore": "~1.5.2",
     "mongoose-error-helper": "0.0.2",
     "screener": "0.0.7",
-    "async": "~0.2.9"
+    "async": "~0.2.9",
+    "mongoose-findorcreate": "~0.1.2"
   },
   "devDependencies": {
     "grunt": "~0.4.1",

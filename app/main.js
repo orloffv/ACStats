@@ -55,6 +55,7 @@
         });
 
         require('./routes/event')(app, mongoose, log);
+        require('./routes/hit')(app, mongoose, log);
         require('./routes/index')(app, mongoose, log);
 
         app.set('mongoose', mongoose);
