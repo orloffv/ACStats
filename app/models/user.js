@@ -19,7 +19,11 @@
         var screenModel = {
             id: true,
             name: true,
-            additional: true
+            additional: true,
+            server: {
+                id: true,
+                name: true
+            }
         };
 
         UserModel.screens = {

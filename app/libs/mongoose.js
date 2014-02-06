@@ -39,6 +39,7 @@
         require('../models/server')(mongoose);
         require('../models/user')(mongoose);
         require('../models/hit')(mongoose);
+        require('../models/session')(mongoose);
 
         return mongoose;
     };
