@@ -3,10 +3,9 @@
     var request = require('supertest');
     var _ = require('underscore');
     var assert = require('assert');
-    var mockgoose = require('mockgoose');
     var Mongoose = require('mongoose').Mongoose;
     var mongoose = new Mongoose();
-    mockgoose(mongoose);
+
     var app = require('../../../app')(mongoose, 'testing');
     var exampleEvent = function(project) {
         return {
@@ -42,13 +41,13 @@
     });
 
     after(function(done) {
+        mongoose.dropAllCollections(done);
         mongoose.disconnect(done);
     });
 
     describe('API Events', function() {
         beforeEach(function(done) {
-            mockgoose.reset();
-            done();
+            mongoose.dropAllCollections(done);
         });
 
         afterEach(function(done) {
@@ -282,7 +281,7 @@
                 });
         });
 
-        xit('GET /api/events/projects should contain empty projects', function (done) {
+        it('GET /api/events/projects should contain empty projects', function (done) {
             request(app)
                 .get('/api/events/projects')
                 .send()
@@ -297,7 +296,7 @@
                 });
         });
 
-        xit('GET /api/events/projects should contain contain 2 projects', function (done) {
+        it('GET /api/events/projects should contain contain 2 projects', function (done) {
             var events = [];
             _.times(100, function() {
                 events.push(exampleEvent());

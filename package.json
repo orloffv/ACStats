@@ -14,7 +14,8 @@
     "nconf": "~0.6.8",
     "underscore": "~1.5.2",
     "mongoose-error-helper": "0.0.2",
-    "screener": "0.0.7"
+    "screener": "0.0.7",
+    "async": "~0.2.9"
   },
   "devDependencies": {
     "grunt": "~0.4.1",
@@ -22,7 +23,6 @@
     "mocha": "1.7.0",
     "should": "1.2.1",
     "supertest": "0.4.0",
-    "grunt-mocha-cli": "~1.3.0",
-    "mockgoose": "~1.0.3"
+    "grunt-mocha-cli": "~1.3.0"
   }
 }
