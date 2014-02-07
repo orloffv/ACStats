@@ -14,18 +14,14 @@
         };
 
         SessionProvider.prototype.save = function (session, callback) {
-            ServerModel.findOrCreate(session.server, function(err, server, created) {
-                UserModel.findOrCreate({name: session.user.name, server: server.id}, session.user.additional, function(err, user, created) {
+            ServerModel.findOrCreate(session.server, function(err, server, serverCreated) {
+                UserModel.findOrCreate({name: session.user.name, server: server.id}, session.user.additional, function(err, user, userCreated) {
                     session.server = server.id;
                     session.user = user.id;
 
                     new SessionModel(session).save(function (err, session) {
                         if (!err) {
-                            if (_.isArray(server.sessions)) {
-                                server.sessions.push(session.id);
-                            } else {
-                                server.sessions = [session.id];
-                            }
+                            var toSave = {};
 
                             if (_.isArray(user.sessions)) {
                                 user.sessions.push(session.id);
@@ -33,15 +29,23 @@
                                 user.sessions = [session.id];
                             }
 
-                            async.parallel(
-                                {
-                                    server: function(callback) {
-                                        server.save(callback);
-                                    },
-                                    user: function(callback) {
-                                        user.save(callback);
-                                    }
-                                },
+                            toSave.user = function(callback) {
+                                user.save(callback);
+                            };
+
+                            if (serverCreated || userCreated) {
+                                if (_.isArray(server.users)) {
+                                    server.users.push(user.id);
+                                } else {
+                                    server.users = [user.id];
+                                }
+
+                                toSave.server = function(callback) {
+                                    server.save(callback);
+                                };
+                            }
+
+                            async.parallel(toSave,
                                 function(e, r) {
                                     callback(err, session);
                                 }

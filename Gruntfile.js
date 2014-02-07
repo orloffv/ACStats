@@ -23,12 +23,12 @@ module.exports = function(grunt) {
             application: {
                 files: {
                     src: [
-                        'app/tests/mock/**/*.js',
                         'app/tests/spec/**/*.js',
                         'app/config/**/*.js',
                         'app/libs/**/*.js',
                         'app/models/**/*.js',
-                        'app/routes/**/*.js'
+                        'app/routes/**/*.js',
+                        'app/data-provider/**/*.js'
                     ]
                 }
             }

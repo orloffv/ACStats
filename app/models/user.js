@@ -11,7 +11,8 @@
             additional: Schema.Types.Mixed,
             server: {type: Schema.Types.ObjectId, ref: 'Server'},
             hits: [{ type: Schema.Types.ObjectId, ref: 'Hit'}],
-            sessions: [{ type: Schema.Types.ObjectId, ref: 'Session'}]
+            sessions: [{ type: Schema.Types.ObjectId, ref: 'Session'}],
+            events: [{ type: Schema.Types.ObjectId, ref: 'Event'}]
         });
 
         User.plugin(findOrCreate);

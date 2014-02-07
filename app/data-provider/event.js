@@ -3,30 +3,30 @@
     module.exports = function(mongoose, log) {
         var _          = require('underscore');
         var async      = require('async');
-        var HitModel = mongoose.model('Hit');
+        var EventModel = mongoose.model('Event');
         var UserModel = mongoose.model('User');
         var ServerModel = mongoose.model('Server');
 
-        var HitProvider = function () {};
+        var EventProvider = function () {};
 
-        HitProvider.prototype.findAll = function (callback) {
-            HitModel.find({}).populate('user server').exec(callback);
+        EventProvider.prototype.findAll = function (callback) {
+            EventModel.find({}).populate('user server').exec(callback);
         };
 
-        HitProvider.prototype.save = function (hit, callback) {
-            ServerModel.findOrCreate(hit.server, function(err, server, serverCreated) {
-                UserModel.findOrCreate({name: hit.user.name, server: server.id}, hit.user.additional, function(err, user, userCreated) {
-                    hit.server = server.id;
-                    hit.user = user.id;
+        EventProvider.prototype.save = function (event, callback) {
+            ServerModel.findOrCreate(event.server, function(err, server, serverCreated) {
+                UserModel.findOrCreate({name: event.user.name, server: server.id}, event.user.additional, function(err, user, userCreated) {
+                    event.server = server.id;
+                    event.user = user.id;
 
-                    new HitModel(hit).save(function (err, hit) {
+                    new EventModel(event).save(function (err, event) {
                         if (!err) {
                             var toSave = {};
 
-                            if (_.isArray(user.hits)) {
-                                user.hits.push(hit.id);
+                            if (_.isArray(user.events)) {
+                                user.events.push(event.id);
                             } else {
-                                user.hits = [hit.id];
+                                user.events = [event.id];
                             }
 
                             toSave.user = function(callback) {
@@ -47,29 +47,29 @@
 
                             async.parallel(toSave,
                                 function(e, r) {
-                                    callback(err, hit);
+                                    callback(err, event);
                                 }
                             );
                         } else {
-                            callback(err, hit);
+                            callback(err, event);
                         }
                     });
                 });
             });
         };
 
-        HitProvider.prototype.saveMultiple = function(hits, callback) {
-            async.map(hits,
-                function(hit, callback) {
-                    HitProvider.prototype.save(hit, callback);
-                }, function(err, hits) {
-                    callback(err, hits);
+        EventProvider.prototype.saveMultiple = function(events, callback) {
+            async.map(events,
+                function(event, callback) {
+                    EventProvider.prototype.save(event, callback);
+                }, function(err, events) {
+                    callback(err, events);
                 }
             );
         };
 
-        HitProvider.prototype.screens = HitModel.screens;
+        EventProvider.prototype.screens = EventModel.screens;
 
-        return new HitProvider();
+        return new EventProvider();
     };
 })();

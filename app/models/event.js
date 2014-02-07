@@ -4,75 +4,29 @@
         var Schema   = mongoose.Schema;
 
         var Event = new Schema({
-            title: { type: String, required: true },
-            environment: { type: String, required: true },
-            context: Schema.Types.Mixed,
-            traits: Schema.Types.Mixed,
-            project: { type: String, required: true },
+            name: { type: String, required: true },
             createdAt: { type: Date, default: Date.now },
-            user: {
-                id: { type: String, required: true },
-                traits: Schema.Types.Mixed,
-                context: Schema.Types.Mixed
-            }
+            additional: Schema.Types.Mixed,
+            user : { type: Schema.Types.ObjectId, ref: 'User' },
+            server: {type: Schema.Types.ObjectId, ref: 'Server'}
         });
-
-        Event.statics.findAllProjects = function(callback) {
-            return this.aggregate(
-                {
-                    $group: {
-                        _id: '$project',
-                        count: { $sum: 1 },
-                        environments: { $addToSet: "$environment" }
-                    }
-                },
-                callback);
-        };
-
-        Event.statics.findGrouped = function(project, environment, callback) {
-            var match = {};
-            if (project) {
-                match.project = project;
-            }
-
-            if (environment) {
-                match.environment = environment;
-            }
-            return this.
-                aggregate(
-                {
-                    $match: match
-                },
-                {
-                    $group: {
-                        _id: '$title',
-                        count: { $sum: 1 },
-                        createdAt: {$first: "$createdAt"},
-                        lastAt: {$last: "$createdAt"},
-                        users: { $addToSet: "$user.id" },
-                        companies: { $addToSet: "$user.traits.companyId" }
-                    }
-                },
-                {
-                    $sort: { count: -1 }
-                }, callback);
-        };
 
         var EventModel = mongoose.model('Event', Event);
 
         var screenModel = {
             id: true,
-            title: true,
+            name: true,
             createdAt: true,
-            environment: true,
-            project: true,
+            additional: true,
             user: {
                 id: true,
-                traits: true,
-                context: true
+                name: true,
+                additional: true
             },
-            context: true,
-            traits: true
+            server: {
+                id: true,
+                name: true
+            }
         };
 
         EventModel.screens = {
@@ -89,6 +43,17 @@
                 }
             ]
         };
+        /*
+         EventModel.insides = {
+             postModel: {
+                 name: true,
+                 createdAt: true,
+                 additional: true,
+                 server: '{serverId}',
+                 user: '{userId}'
+             }
+         };
+         */
 
         return EventModel;
     };
