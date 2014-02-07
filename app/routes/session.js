@@ -2,23 +2,21 @@
     "use strict";
     module.exports = function(app, mongoose, log) {
         var _          = require('underscore');
-        var SessionModel = mongoose.model('Session');
-        var UserModel = mongoose.model('User');
-        var ServerModel = mongoose.model('Server');
+
+        var SessionProvider = require('../data-provider/session')(mongoose, log);
         var errorHelper = require('mongoose-error-helper').errorHelper;
         var screen = require('screener').screen;
         var mapping = require('./../libs/mapping');
 
         var routes = {
             list: function(req, res) {
-                var filter = {};
-
-                return SessionModel.find(filter).populate('user server').exec(function(err, sessions) {
+                return SessionProvider.findAll(function(err, sessions) {
                     if (!err) {
-                        return res.send(screen(sessions, SessionModel.screens.collection));
+                        return res.send(screen(sessions, SessionProvider.screens.collection));
                     } else {
                         res.statusCode = 500;
                         log.error('Internal error(%d): %s', res.statusCode, err.message);
+
                         return res.send({ error: 'Server error' });
                     }
                 });
@@ -35,24 +33,28 @@
                 }
 
                 if (_.size(sessions)) {
-                    _.each(sessions, function(session) {
-                        ServerModel.findOrCreate(session.server, function(err, server, created) {
+                    SessionProvider.saveMultiple(sessions, function(err, sessions) {
+                        if (!err) {
+                            res.statusCode = 201;
 
-                            UserModel.findOrCreate({name: session.user.name, server: server.id}, session.user.additional, function(err, user, created) {
-                                session.server = server.id;
-                                session.user = user.id;
+                            return res.send(screen(sessions, SessionProvider.screens.postCollection));
+                        } else {
+                            if(err.name === 'ValidationError') {
+                                res.statusCode = 400;
 
-                                new SessionModel(session).save(function (err, session) {
-                                    res.statusCode = 201;
-                                    return res.send(screen(session, SessionModel.screens.postModel));
-                                });
-                            });
-                        });
+                                return res.send({ errors: errorHelper(err)});
+                            } else {
+                                res.statusCode = 500;
+                                log.error('Internal error(%d): %s', res.statusCode, err.message);
+
+                                return res.send({ error: 'Server error' });
+                            }
+                        }
                     });
                 } else {
                     res.statusCode = 400;
                     if (!_.size(sessions)) {
-                        res.send({ error: 'Empty request' });
+                        return res.send({ error: 'Empty request' });
                     } else {
                         return res.send({ error: 'Server error' });
                     }

@@ -2,20 +2,17 @@
     "use strict";
     module.exports = function(app, mongoose, log) {
         var _          = require('underscore');
-        var HitModel = mongoose.model('Hit');
-        var UserModel = mongoose.model('User');
-        var ServerModel = mongoose.model('Server');
+
+        var HitProvider = require('../data-provider/hit')(mongoose, log);
         var errorHelper = require('mongoose-error-helper').errorHelper;
         var screen = require('screener').screen;
         var mapping = require('./../libs/mapping');
 
         var routes = {
             list: function(req, res) {
-                var filter = {};
-
-                return HitModel.find(filter).populate('user server').exec(function(err, hits) {
+                return HitProvider.findAll(function(err, hits) {
                     if (!err) {
-                        return res.send(screen(hits, HitModel.screens.collection));
+                        return res.send(screen(hits, HitProvider.screens.collection));
                     } else {
                         res.statusCode = 500;
                         log.error('Internal error(%d): %s', res.statusCode, err.message);
@@ -35,24 +32,28 @@
                 }
 
                 if (_.size(hits)) {
-                    _.each(hits, function(hit) {
-                        ServerModel.findOrCreate(hit.server, function(err, server, created) {
+                    HitProvider.saveMultiple(hits, function(err, hits) {
+                        if (!err) {
+                            res.statusCode = 201;
 
-                            UserModel.findOrCreate({name: hit.user.name, server: server.id}, hit.user.additional, function(err, user, created) {
-                                hit.server = server.id;
-                                hit.user = user.id;
+                            return res.send(screen(hits, HitProvider.screens.postCollection));
+                        } else {
+                            if(err.name === 'ValidationError') {
+                                res.statusCode = 400;
 
-                                new HitModel(hit).save(function (err, hit) {
-                                    res.statusCode = 201;
-                                    return res.send(screen(hit, HitModel.screens.postModel));
-                                });
-                            });
-                        });
+                                return res.send({ errors: errorHelper(err)});
+                            } else {
+                                res.statusCode = 500;
+                                log.error('Internal error(%d): %s', res.statusCode, err.message);
+
+                                return res.send({ error: 'Server error' });
+                            }
+                        }
                     });
                 } else {
                     res.statusCode = 400;
                     if (!_.size(hits)) {
-                        res.send({ error: 'Empty request' });
+                        return res.send({ error: 'Empty request' });
                     } else {
                         return res.send({ error: 'Server error' });
                     }

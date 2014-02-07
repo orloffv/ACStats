@@ -9,7 +9,9 @@
         var User = new Schema({
             name: { type: String, required: true },
             additional: Schema.Types.Mixed,
-            server: {type: Schema.Types.ObjectId, ref: 'Server'}
+            server: {type: Schema.Types.ObjectId, ref: 'Server'},
+            hits: [{ type: Schema.Types.ObjectId, ref: 'Hit'}],
+            sessions: [{ type: Schema.Types.ObjectId, ref: 'Session'}]
         });
 
         User.plugin(findOrCreate);
