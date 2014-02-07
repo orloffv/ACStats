@@ -11,6 +11,10 @@
             UserModel.find({}).populate('server').exec(callback);
         };
 
+        UserProvider.prototype.getById = function(id, callback) {
+            UserModel.findById(id).populate('user server').exec(callback);
+        };
+
         UserProvider.prototype.screens = UserModel.screens;
 
         return new UserProvider();

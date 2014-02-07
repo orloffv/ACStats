@@ -14,6 +14,10 @@
             HitModel.find({}).populate('user server').exec(callback);
         };
 
+        HitProvider.prototype.getById = function(id, callback) {
+            HitModel.findById(id).populate('user server').exec(callback);
+        };
+
         HitProvider.prototype.save = function (hit, callback) {
             ServerModel.findOrCreate(hit.server, function(err, server, serverCreated) {
                 UserModel.findOrCreate({name: hit.user.name, server: server.id}, {additional: hit.user.additional}, function(err, user, userCreated) {

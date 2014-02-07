@@ -59,10 +59,22 @@
                         return res.send({ error: 'Server error' });
                     }
                 }
+            },
+            get: function(req, res) {
+                return SessionProvider.getById(req.params.id, function(err, session) {
+                    if (!session) {
+                        res.statusCode = 404;
+
+                        return res.send({ error: 'Not found' });
+                    } else {
+                        return res.send(screen(session, SessionProvider.screens.model));
+                    }
+                });
             }
         };
 
         app.get('/api/sessions', routes.list);
         app.post('/api/sessions', routes.post);
+        app.get('/api/sessions/:id', routes.get);
     };
 })();

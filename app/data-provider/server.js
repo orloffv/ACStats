@@ -11,6 +11,10 @@
             ServerModel.find({}).populate('user').exec(callback);
         };
 
+        ServerProvider.prototype.getById = function(id, callback) {
+            ServerModel.findById(id).populate('user server').exec(callback);
+        };
+
         ServerProvider.prototype.screens = ServerModel.screens;
 
         return new ServerProvider();

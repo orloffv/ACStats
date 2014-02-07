@@ -58,10 +58,22 @@
                         return res.send({ error: 'Server error' });
                     }
                 }
+            },
+            get: function(req, res) {
+                return HitProvider.getById(req.params.id, function(err, hit) {
+                    if (!hit) {
+                        res.statusCode = 404;
+
+                        return res.send({ error: 'Not found' });
+                    } else {
+                        return res.send(screen(hit, HitProvider.screens.model));
+                    }
+                });
             }
         };
 
         app.get('/api/hits', routes.list);
         app.post('/api/hits', routes.post);
+        app.get('/api/hits/:id', routes.get);
     };
 })();

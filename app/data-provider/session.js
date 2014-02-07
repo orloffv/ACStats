@@ -13,6 +13,10 @@
             SessionModel.find({}).populate('user server').exec(callback);
         };
 
+        SessionProvider.prototype.getById = function(id, callback) {
+            SessionModel.findById(id).populate('user server').exec(callback);
+        };
+
         SessionProvider.prototype.save = function (session, callback) {
             ServerModel.findOrCreate(session.server, function(err, server, serverCreated) {
                 UserModel.findOrCreate({name: session.user.name, server: server.id}, {additional: session.user.additional}, function(err, user, userCreated) {

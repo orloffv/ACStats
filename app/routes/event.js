@@ -58,10 +58,22 @@
                         return res.send({ error: 'Server error' });
                     }
                 }
+            },
+            get: function(req, res) {
+                return EventProvider.getById(req.params.id, function(err, event) {
+                    if (!event) {
+                        res.statusCode = 404;
+
+                        return res.send({ error: 'Not found' });
+                    } else {
+                        return res.send(screen(event, EventProvider.screens.model));
+                    }
+                });
             }
         };
 
         app.get('/api/events', routes.list);
         app.post('/api/events', routes.post);
+        app.get('/api/events/:id', routes.get);
     };
 })();

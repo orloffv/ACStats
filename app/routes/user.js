@@ -20,9 +20,21 @@
                         return res.send({ error: 'Server error' });
                     }
                 });
+            },
+            get: function(req, res) {
+                return UserProvider.getById(req.params.id, function(err, user) {
+                    if (!user) {
+                        res.statusCode = 404;
+
+                        return res.send({ error: 'Not found' });
+                    } else {
+                        return res.send(screen(user, UserProvider.screens.model));
+                    }
+                });
             }
         };
 
         app.get('/api/users', routes.list);
+        app.get('/api/users/:id', routes.get);
     };
 })();

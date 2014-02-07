@@ -9,11 +9,15 @@
 
         var EventProvider = function () {};
 
-        EventProvider.prototype.findAll = function (callback) {
+        EventProvider.prototype.findAll = function(callback) {
             EventModel.find({}).populate('user server').exec(callback);
         };
 
-        EventProvider.prototype.save = function (event, callback) {
+        EventProvider.prototype.getById = function(id, callback) {
+            EventModel.findById(id).populate('user server').exec(callback);
+        };
+
+        EventProvider.prototype.save = function(event, callback) {
             ServerModel.findOrCreate(event.server, function(err, server, serverCreated) {
                 UserModel.findOrCreate({name: event.user.name, server: server.id}, {additional: event.user.additional}, function(err, user, userCreated) {
                     event.server = server.id;
