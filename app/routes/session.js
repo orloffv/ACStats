@@ -10,38 +10,13 @@
 
         var routes = {
             list: function(req, res) {
-                return SessionProvider.findAll(function(err, sessions) {
-                    if (!err) {
-                        return res.send(screen(sessions, SessionProvider.screens.collection));
-                    } else {
-                        res.statusCode = 500;
-                        log.error('Internal error(%d): %s', res.statusCode, err.message);
-
-                        return res.send({ error: 'Server error' });
-                    }
-                });
+                return routes.listWithFilter({}, req, res);
             },
             listByUser: function(req, res) {
-                return SessionProvider.findAll({user: req.params.id}, function(err, sessions) {
-                    if (!err) {
-                        return res.send(screen(sessions, SessionProvider.screens.collection));
-                    } else {
-                        res.statusCode = 500;
-                        log.error('Internal error(%d): %s', res.statusCode, err.message);
-                        return res.send({ error: 'Server error' });
-                    }
-                });
+                return routes.listWithFilter({user: req.params.id}, req, res);
             },
             listByServer: function(req, res) {
-                return SessionProvider.findAll({server: req.params.id}, function(err, sessions) {
-                    if (!err) {
-                        return res.send(screen(sessions, SessionProvider.screens.collection));
-                    } else {
-                        res.statusCode = 500;
-                        log.error('Internal error(%d): %s', res.statusCode, err.message);
-                        return res.send({ error: 'Server error' });
-                    }
-                });
+                return routes.listWithFilter({server: req.params.id}, req, res);
             },
             post: function(req, res) {
                 var sessions = [];
@@ -90,6 +65,18 @@
                         return res.send({ error: 'Not found' });
                     } else {
                         return res.send(screen(session, SessionProvider.screens.model));
+                    }
+                });
+            },
+            listWithFilter: function(where, req, res) {
+                return SessionProvider.findAll(where, function(err, sessions) {
+                    if (!err) {
+                        return res.send(screen(sessions, SessionProvider.screens.collection));
+                    } else {
+                        res.statusCode = 500;
+                        log.error('Internal error(%d): %s', res.statusCode, err.message);
+
+                        return res.send({ error: 'Server error' });
                     }
                 });
             }

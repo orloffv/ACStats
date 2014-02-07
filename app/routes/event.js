@@ -10,39 +10,13 @@
 
         var routes = {
             list: function(req, res) {
-                return EventProvider.findAll(function(err, events) {
-                    if (!err) {
-                        return res.send(screen(events, EventProvider.screens.collection));
-                    } else {
-                        res.statusCode = 500;
-                        log.error('Internal error(%d): %s', res.statusCode, err.message);
-                        return res.send({ error: 'Server error' });
-                    }
-                });
+                return routes.listWithFilter({}, req, res);
             },
             listByServer: function(req, res) {
-                return EventProvider.findAll({server: req.params.id}, function(err, events) {
-                    if (!err) {
-                        return res.send(screen(events, EventProvider.screens.collection));
-                    } else {
-                        res.statusCode = 500;
-                        log.error('Internal error(%d): %s', res.statusCode, err.message);
-
-                        return res.send({ error: 'Server error' });
-                    }
-                });
+                return routes.listWithFilter({server: req.params.id}, req, res);
             },
             listByUser: function(req, res) {
-                return EventProvider.findAll({user: req.params.id}, function(err, events) {
-                    if (!err) {
-                        return res.send(screen(events, EventProvider.screens.collection));
-                    } else {
-                        res.statusCode = 500;
-                        log.error('Internal error(%d): %s', res.statusCode, err.message);
-
-                        return res.send({ error: 'Server error' });
-                    }
-                });
+                return routes.listWithFilter({user: req.params.id}, req, res);
             },
             post: function(req, res) {
                 var events = [];
@@ -91,6 +65,17 @@
                         return res.send({ error: 'Not found' });
                     } else {
                         return res.send(screen(event, EventProvider.screens.model));
+                    }
+                });
+            },
+            listWithFilter: function(where, req, res) {
+                return EventProvider.findAll(where, function(err, events) {
+                    if (!err) {
+                        return res.send(screen(events, EventProvider.screens.collection));
+                    } else {
+                        res.statusCode = 500;
+                        log.error('Internal error(%d): %s', res.statusCode, err.message);
+                        return res.send({ error: 'Server error' });
                     }
                 });
             }

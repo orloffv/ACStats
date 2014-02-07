@@ -10,48 +10,16 @@
 
         var routes = {
             list: function(req, res) {
-                return HitProvider.findAll({}, function(err, hits) {
-                    if (!err) {
-                        return res.send(screen(hits, HitProvider.screens.collection));
-                    } else {
-                        res.statusCode = 500;
-                        log.error('Internal error(%d): %s', res.statusCode, err.message);
-                        return res.send({ error: 'Server error' });
-                    }
-                });
+                return routes.listWithFilter({}, req, res);
             },
             listByUser: function(req, res) {
-                return HitProvider.findAll({user: req.params.id}, function(err, hits) {
-                    if (!err) {
-                        return res.send(screen(hits, HitProvider.screens.collection));
-                    } else {
-                        res.statusCode = 500;
-                        log.error('Internal error(%d): %s', res.statusCode, err.message);
-                        return res.send({ error: 'Server error' });
-                    }
-                });
+                return routes.listWithFilter({user: req.params.id}, req, res);
             },
             listByServer: function(req, res) {
-                return HitProvider.findAll({server: req.params.id}, function(err, hits) {
-                    if (!err) {
-                        return res.send(screen(hits, HitProvider.screens.collection));
-                    } else {
-                        res.statusCode = 500;
-                        log.error('Internal error(%d): %s', res.statusCode, err.message);
-                        return res.send({ error: 'Server error' });
-                    }
-                });
+                return routes.listWithFilter({server: req.params.id}, req, res);
             },
             listBySession: function(req, res) {
-                return HitProvider.findAll({session: req.params.id}, function(err, hits) {
-                    if (!err) {
-                        return res.send(screen(hits, HitProvider.screens.collection));
-                    } else {
-                        res.statusCode = 500;
-                        log.error('Internal error(%d): %s', res.statusCode, err.message);
-                        return res.send({ error: 'Server error' });
-                    }
-                });
+                return routes.listWithFilter({session: req.params.id}, req, res);
             },
             post: function(req, res) {
                 var hits = [];
@@ -100,6 +68,17 @@
                         return res.send({ error: 'Not found' });
                     } else {
                         return res.send(screen(hit, HitProvider.screens.model));
+                    }
+                });
+            },
+            listWithFilter: function(where, req, res) {
+                return HitProvider.findAll(where, function(err, hits) {
+                    if (!err) {
+                        return res.send(screen(hits, HitProvider.screens.collection));
+                    } else {
+                        res.statusCode = 500;
+                        log.error('Internal error(%d): %s', res.statusCode, err.message);
+                        return res.send({ error: 'Server error' });
                     }
                 });
             }

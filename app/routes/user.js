@@ -10,28 +10,10 @@
 
         var routes = {
             list: function(req, res) {
-                return UserProvider.findAll(function(err, users) {
-                    if (!err) {
-                        return res.send(screen(users, UserProvider.screens.collection));
-                    } else {
-                        res.statusCode = 500;
-                        log.error('Internal error(%d): %s', res.statusCode, err.message);
-
-                        return res.send({ error: 'Server error' });
-                    }
-                });
+                return routes.listWithFilter({}, req, res);
             },
             listByServer: function(req, res) {
-                return UserProvider.findAll({server: req.params.id}, function(err, users) {
-                    if (!err) {
-                        return res.send(screen(users, UserProvider.screens.collection));
-                    } else {
-                        res.statusCode = 500;
-                        log.error('Internal error(%d): %s', res.statusCode, err.message);
-
-                        return res.send({ error: 'Server error' });
-                    }
-                });
+                return routes.listWithFilter({server: req.params.id}, req, res);
             },
             get: function(req, res) {
                 return UserProvider.getById(req.params.id, function(err, user) {
@@ -41,6 +23,18 @@
                         return res.send({ error: 'Not found' });
                     } else {
                         return res.send(screen(user, UserProvider.screens.model));
+                    }
+                });
+            },
+            listWithFilter: function(where, req, res) {
+                return UserProvider.findAll(where, function(err, users) {
+                    if (!err) {
+                        return res.send(screen(users, UserProvider.screens.collection));
+                    } else {
+                        res.statusCode = 500;
+                        log.error('Internal error(%d): %s', res.statusCode, err.message);
+
+                        return res.send({ error: 'Server error' });
                     }
                 });
             }
