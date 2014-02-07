@@ -15,7 +15,7 @@
 
         EventProvider.prototype.save = function (event, callback) {
             ServerModel.findOrCreate(event.server, function(err, server, serverCreated) {
-                UserModel.findOrCreate({name: event.user.name, server: server.id}, event.user.additional, function(err, user, userCreated) {
+                UserModel.findOrCreate({name: event.user.name, server: server.id}, {additional: event.user.additional}, function(err, user, userCreated) {
                     event.server = server.id;
                     event.user = user.id;
 
@@ -29,6 +29,8 @@
                                 user.events = [event.id];
                             }
 
+                            user.events = _.uniq(user.events);
+
                             toSave.user = function(callback) {
                                 user.save(callback);
                             };
@@ -39,6 +41,8 @@
                                 } else {
                                     server.users = [user.id];
                                 }
+
+                                server.users = _.uniq(server.users);
 
                                 toSave.server = function(callback) {
                                     server.save(callback);

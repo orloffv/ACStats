@@ -15,7 +15,7 @@
 
         SessionProvider.prototype.save = function (session, callback) {
             ServerModel.findOrCreate(session.server, function(err, server, serverCreated) {
-                UserModel.findOrCreate({name: session.user.name, server: server.id}, session.user.additional, function(err, user, userCreated) {
+                UserModel.findOrCreate({name: session.user.name, server: server.id}, {additional: session.user.additional}, function(err, user, userCreated) {
                     session.server = server.id;
                     session.user = user.id;
 
@@ -29,6 +29,8 @@
                                 user.sessions = [session.id];
                             }
 
+                            user.sessions = _.uniq(user.sessions);
+
                             toSave.user = function(callback) {
                                 user.save(callback);
                             };
@@ -39,6 +41,8 @@
                                 } else {
                                     server.users = [user.id];
                                 }
+
+                                server.users = _.uniq(server.users);
 
                                 toSave.server = function(callback) {
                                     server.save(callback);

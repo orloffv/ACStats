@@ -7,7 +7,7 @@
             url: { type: String, required: true },
             createdAt: { type: Date, default: Date.now },
             additional: Schema.Types.Mixed,
-            user : { type: Schema.Types.ObjectId, ref: 'User' },
+            user: { type: Schema.Types.ObjectId, ref: 'User' },
             server: {type: Schema.Types.ObjectId, ref: 'Server'},
             session: {type: Schema.Types.ObjectId, ref: 'Session'}
         });
