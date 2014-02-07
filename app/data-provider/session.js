@@ -9,8 +9,8 @@
 
         var SessionProvider = function () {};
 
-        SessionProvider.prototype.findAll = function (callback) {
-            SessionModel.find({}).populate('user server').exec(callback);
+        SessionProvider.prototype.findAll = function (where, callback) {
+            SessionModel.find(where).populate('user server').exec(callback);
         };
 
         SessionProvider.prototype.getById = function(id, callback) {

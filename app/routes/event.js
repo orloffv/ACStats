@@ -20,6 +20,30 @@
                     }
                 });
             },
+            listByServer: function(req, res) {
+                return EventProvider.findAll({server: req.params.id}, function(err, events) {
+                    if (!err) {
+                        return res.send(screen(events, EventProvider.screens.collection));
+                    } else {
+                        res.statusCode = 500;
+                        log.error('Internal error(%d): %s', res.statusCode, err.message);
+
+                        return res.send({ error: 'Server error' });
+                    }
+                });
+            },
+            listByUser: function(req, res) {
+                return EventProvider.findAll({user: req.params.id}, function(err, events) {
+                    if (!err) {
+                        return res.send(screen(events, EventProvider.screens.collection));
+                    } else {
+                        res.statusCode = 500;
+                        log.error('Internal error(%d): %s', res.statusCode, err.message);
+
+                        return res.send({ error: 'Server error' });
+                    }
+                });
+            },
             post: function(req, res) {
                 var events = [];
 
@@ -75,5 +99,7 @@
         app.get('/api/events', routes.list);
         app.post('/api/events', routes.post);
         app.get('/api/events/:id', routes.get);
+        app.get('/api/servers/:id/events', routes.listByServer);
+        app.get('/api/users/:id/events', routes.listByUser);
     };
 })();

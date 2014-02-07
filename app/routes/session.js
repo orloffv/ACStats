@@ -21,6 +21,28 @@
                     }
                 });
             },
+            listByUser: function(req, res) {
+                return SessionProvider.findAll({user: req.params.id}, function(err, sessions) {
+                    if (!err) {
+                        return res.send(screen(sessions, SessionProvider.screens.collection));
+                    } else {
+                        res.statusCode = 500;
+                        log.error('Internal error(%d): %s', res.statusCode, err.message);
+                        return res.send({ error: 'Server error' });
+                    }
+                });
+            },
+            listByServer: function(req, res) {
+                return SessionProvider.findAll({server: req.params.id}, function(err, sessions) {
+                    if (!err) {
+                        return res.send(screen(sessions, SessionProvider.screens.collection));
+                    } else {
+                        res.statusCode = 500;
+                        log.error('Internal error(%d): %s', res.statusCode, err.message);
+                        return res.send({ error: 'Server error' });
+                    }
+                });
+            },
             post: function(req, res) {
                 var sessions = [];
 
@@ -76,5 +98,7 @@
         app.get('/api/sessions', routes.list);
         app.post('/api/sessions', routes.post);
         app.get('/api/sessions/:id', routes.get);
+        app.get('/api/users/:id/sessions', routes.listByUser);
+        app.get('/api/servers/:id/sessions', routes.listByServer);
     };
 })();

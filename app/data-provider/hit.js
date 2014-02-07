@@ -10,8 +10,8 @@
 
         var HitProvider = function () {};
 
-        HitProvider.prototype.findAll = function (callback) {
-            HitModel.find({}).populate('user server').exec(callback);
+        HitProvider.prototype.findAll = function (where, callback) {
+            HitModel.find(where).populate('user server').exec(callback);
         };
 
         HitProvider.prototype.getById = function(id, callback) {

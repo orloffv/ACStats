@@ -7,8 +7,8 @@
 
         var UserProvider = function () {};
 
-        UserProvider.prototype.findAll = function (callback) {
-            UserModel.find({}).populate('server').exec(callback);
+        UserProvider.prototype.findAll = function (where, callback) {
+            UserModel.find(where).populate('server').exec(callback);
         };
 
         UserProvider.prototype.getById = function(id, callback) {

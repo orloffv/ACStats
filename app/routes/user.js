@@ -21,6 +21,18 @@
                     }
                 });
             },
+            listByServer: function(req, res) {
+                return UserProvider.findAll({server: req.params.id}, function(err, users) {
+                    if (!err) {
+                        return res.send(screen(users, UserProvider.screens.collection));
+                    } else {
+                        res.statusCode = 500;
+                        log.error('Internal error(%d): %s', res.statusCode, err.message);
+
+                        return res.send({ error: 'Server error' });
+                    }
+                });
+            },
             get: function(req, res) {
                 return UserProvider.getById(req.params.id, function(err, user) {
                     if (!user) {
@@ -36,5 +48,6 @@
 
         app.get('/api/users', routes.list);
         app.get('/api/users/:id', routes.get);
+        app.get('/api/servers/:id/users', routes.listByServer);
     };
 })();

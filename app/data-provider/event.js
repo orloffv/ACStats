@@ -9,8 +9,8 @@
 
         var EventProvider = function () {};
 
-        EventProvider.prototype.findAll = function(callback) {
-            EventModel.find({}).populate('user server').exec(callback);
+        EventProvider.prototype.findAll = function(where, callback) {
+            EventModel.find(where).populate('user server').exec(callback);
         };
 
         EventProvider.prototype.getById = function(id, callback) {

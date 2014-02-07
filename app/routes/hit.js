@@ -10,7 +10,40 @@
 
         var routes = {
             list: function(req, res) {
-                return HitProvider.findAll(function(err, hits) {
+                return HitProvider.findAll({}, function(err, hits) {
+                    if (!err) {
+                        return res.send(screen(hits, HitProvider.screens.collection));
+                    } else {
+                        res.statusCode = 500;
+                        log.error('Internal error(%d): %s', res.statusCode, err.message);
+                        return res.send({ error: 'Server error' });
+                    }
+                });
+            },
+            listByUser: function(req, res) {
+                return HitProvider.findAll({user: req.params.id}, function(err, hits) {
+                    if (!err) {
+                        return res.send(screen(hits, HitProvider.screens.collection));
+                    } else {
+                        res.statusCode = 500;
+                        log.error('Internal error(%d): %s', res.statusCode, err.message);
+                        return res.send({ error: 'Server error' });
+                    }
+                });
+            },
+            listByServer: function(req, res) {
+                return HitProvider.findAll({server: req.params.id}, function(err, hits) {
+                    if (!err) {
+                        return res.send(screen(hits, HitProvider.screens.collection));
+                    } else {
+                        res.statusCode = 500;
+                        log.error('Internal error(%d): %s', res.statusCode, err.message);
+                        return res.send({ error: 'Server error' });
+                    }
+                });
+            },
+            listBySession: function(req, res) {
+                return HitProvider.findAll({session: req.params.id}, function(err, hits) {
                     if (!err) {
                         return res.send(screen(hits, HitProvider.screens.collection));
                     } else {
@@ -75,5 +108,8 @@
         app.get('/api/hits', routes.list);
         app.post('/api/hits', routes.post);
         app.get('/api/hits/:id', routes.get);
+        app.get('/api/users/:id/hits', routes.listByUser);
+        app.get('/api/servers/:id/hits', routes.listByServer);
+        app.get('/api/sessions/:id/hits', routes.listBySession);
     };
 })();
