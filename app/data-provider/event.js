@@ -13,6 +13,10 @@
             EventModel.find(where).populate('user server').exec(callback);
         };
 
+        EventProvider.prototype.findAllWithGroupByName = function(where, callback) {
+            EventModel.findAllWithGroupByName(where, callback);
+        };
+
         EventProvider.prototype.getById = function(id, callback) {
             EventModel.findById(id).populate('user server').exec(callback);
         };
