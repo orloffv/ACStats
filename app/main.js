@@ -60,6 +60,7 @@
         require('./routes/server')(app, mongoose, log);
         require('./routes/user')(app, mongoose, log);
         require('./routes/session')(app, mongoose, log);
+        require('./routes/all')(app, mongoose, log);
         require('./routes/index')(app, mongoose, log);
 
         app.set('mongoose', mongoose);

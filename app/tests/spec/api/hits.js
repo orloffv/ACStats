@@ -7,7 +7,7 @@
     var mongoose = new Mongoose();
 
     var app = require('../../../app')(mongoose, 'testing');
-    var exampleHint = function(data) {
+    var exampleHit = function(data) {
         data = data || {};
 
         return _.extend({
@@ -79,7 +79,7 @@
         it('POST /api/hits should successfully save', function (done) {
             request(app)
                 .post('/api/hits')
-                .send(exampleHint())
+                .send(exampleHit())
                 .expect(201)
                 .end(function(err, res) {
                     if (err) {
@@ -94,8 +94,8 @@
             request(app)
                 .post('/api/hits')
                 .send([
-                    exampleHint(),
-                    exampleHint()
+                    exampleHit(),
+                    exampleHit()
                 ])
                 .expect(201)
                 .end(function(err, res) {
@@ -115,8 +115,8 @@
             request(app)
                 .post('/api/hits')
                 .send([
-                    exampleHint(),
-                    exampleHint()
+                    exampleHit(),
+                    exampleHit()
                 ])
                 .expect(201)
                 .end(function(err, res) {
@@ -129,7 +129,7 @@
                             }
 
                             assert(res.body.length === 2);
-                            assert(res.body[0].url === exampleHint().url);
+                            assert(res.body[0].url === exampleHit().url);
                             assert(res.body[0].user.id === res.body[1].user.id);
                             assert(res.body[0].server.id === res.body[1].server.id);
                             done();
@@ -140,7 +140,7 @@
         it('GET /api/hits/:id should contain hint', function (done) {
             request(app)
                 .post('/api/hits')
-                .send(exampleHint())
+                .send(exampleHit())
                 .expect(201)
                 .end(function(err, res) {
                     if (err) {
@@ -154,7 +154,7 @@
                             if (err) {
                                 return done(err);
                             }
-                            assert(res.body.url === exampleHint().url);
+                            assert(res.body.url === exampleHit().url);
                             done();
                         });
                 });
@@ -260,7 +260,7 @@
             request(app)
                 .post('/api/hits')
                 .send([
-                    exampleHint(),
+                    exampleHit(),
                     {
                         server: {
                             empty: 'empty'
@@ -295,9 +295,9 @@
             request(app)
                 .post('/api/hits')
                 .send([
-                    exampleHint(),
-                    exampleHint({user: {"name": "test2@example.com"}}),
-                    exampleHint({server: {"name": "development2"}})
+                    exampleHit(),
+                    exampleHit({user: {"name": "test2@example.com"}}),
+                    exampleHit({server: {"name": "development2"}})
                 ])
                 .expect(201)
                 .end(function(err, res) {
@@ -325,9 +325,9 @@
             request(app)
                 .post('/api/hits')
                 .send([
-                    exampleHint(),
-                    exampleHint(),
-                    exampleHint({user: {"name": "test2@example.com"}})
+                    exampleHit(),
+                    exampleHit(),
+                    exampleHit({user: {"name": "test2@example.com"}})
                 ])
                 .expect(201)
                 .end(function(err, res) {
