@@ -37,9 +37,17 @@
                         if (!err) {
                             res.statusCode = 201;
 
-                            return res.send(screen(hits, HitProvider.screens.postCollection));
+                            if (_.size(hits) === 1) {
+                                return res.send(screen(hits[0], HitProvider.screens.postModel));
+                            } else {
+                                return res.send(screen(hits, HitProvider.screens.postCollection));
+                            }
                         } else {
-                            if(err.name === 'ValidationError') {
+                            if (err.name === 'SchemaError') {
+                                res.statusCode = 400;
+
+                                return res.send({ errors: err.errors});
+                            } else if (err.name === 'ValidationError') {
                                 res.statusCode = 400;
 
                                 return res.send({ errors: errorHelper(err)});

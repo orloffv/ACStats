@@ -1,0 +1,10 @@
+{
+    "id": "/Event",
+    "type": "object",
+    "properties": {
+        "url": {"type": "string", "required": true},
+        "additional": {"type": "object"},
+        "user": {"type": "object", "required": true},
+        "server": {"type": "object", "required": true}
+    }
+}

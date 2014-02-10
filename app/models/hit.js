@@ -36,11 +36,15 @@
                 screenModel
             ],
             postModel: {
-                id: true
+                id: true,
+                server: true,
+                user: true
             },
             postCollection: [
                 {
-                    id: true
+                    id: true,
+                    server: true,
+                    user: true
                 }
             ]
         };
