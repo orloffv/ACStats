@@ -4,7 +4,7 @@
         var _          = require('underscore');
 
         var SessionProvider = require('../data-providers/session')(mongoose, log);
-        var errorHelper = require('mongoose-error-helper').errorHelper;
+        var errorHelper = require('./../libs/error-helper')(log);
         var screen = require('screener').screen;
         var mapping = require('./../libs/mapping');
 
@@ -19,43 +19,15 @@
                 return routes.listWithFilter({server: req.params.id}, req, res);
             },
             post: function(req, res) {
-                var sessions = [];
+                SessionProvider.saveMultiple(req.body, function(err, sessions) {
+                    if (!err) {
+                        res.statusCode = 201;
 
-                if (_.isArray(req.body)) {
-                    sessions = _.map(req.body, function(object) {
-                        return object;
-                    });
-                } else {
-                    sessions = [req.body];
-                }
-
-                if (_.size(sessions)) {
-                    SessionProvider.saveMultiple(sessions, function(err, sessions) {
-                        if (!err) {
-                            res.statusCode = 201;
-
-                            return res.send(screen(sessions, SessionProvider.screens.postCollection));
-                        } else {
-                            if(err.name === 'ValidationError') {
-                                res.statusCode = 400;
-
-                                return res.send({ errors: errorHelper(err)});
-                            } else {
-                                res.statusCode = 500;
-                                log.error('Internal error(%d): %s', res.statusCode, err.message);
-
-                                return res.send({ error: 'Server error' });
-                            }
-                        }
-                    });
-                } else {
-                    res.statusCode = 400;
-                    if (!_.size(sessions)) {
-                        return res.send({ error: 'Empty request' });
+                        return res.send(screen(sessions, SessionProvider.screens.postCollection));
                     } else {
-                        return res.send({ error: 'Server error' });
+                        return errorHelper(err, res);
                     }
-                }
+                });
             },
             get: function(req, res) {
                 return SessionProvider.getById(req.params.id, function(err, session) {

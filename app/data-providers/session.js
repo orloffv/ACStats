@@ -66,11 +66,29 @@
             });
         };
 
-        SessionProvider.prototype.saveMultiple = function(sessions, callback) {
-            async.map(sessions,
-                function(session, callback) {
-                    SessionProvider.prototype.save(session, callback);
-                }, function(err, sessions) {
+        SessionProvider.prototype.saveMultiple = function(data, callback) {
+            var toSave = [], sessions = [];
+
+            if (_.isArray(data)) {
+                sessions = _.map(data, function(object) {
+                    return object;
+                });
+            } else {
+                sessions = [data];
+            }
+
+            if (!_.size(sessions)) {
+                return callback({name: 'Empty'});
+            }
+
+            toSave = _.map(sessions, function(session) {
+                return function(cb) {
+                    return SessionProvider.prototype.save(session, cb);
+                };
+            });
+
+            async.series(toSave,
+                function(err, sessions) {
                     callback(err, sessions);
                 }
             );

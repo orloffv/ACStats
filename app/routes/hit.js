@@ -4,7 +4,7 @@
         var _          = require('underscore');
 
         var HitProvider = require('../data-providers/hit')(mongoose, log);
-        var errorHelper = require('mongoose-error-helper').errorHelper;
+        var errorHelper = require('./../libs/error-helper')(log);
         var screen = require('screener').screen;
         var mapping = require('./../libs/mapping');
 
@@ -22,51 +22,19 @@
                 return routes.listWithFilter({session: req.params.id}, req, res);
             },
             post: function(req, res) {
-                var hits = [];
+                HitProvider.saveMultiple(req.body, function(err, hits) {
+                    if (!err) {
+                        res.statusCode = 201;
 
-                if (_.isArray(req.body)) {
-                    hits = _.map(req.body, function(object) {
-                        return object;
-                    });
-                } else {
-                    hits = [req.body];
-                }
-
-                if (_.size(hits)) {
-                    HitProvider.saveMultiple(hits, function(err, hits) {
-                        if (!err) {
-                            res.statusCode = 201;
-
-                            if (_.size(hits) === 1) {
-                                return res.send(screen(hits[0], HitProvider.screens.postModel));
-                            } else {
-                                return res.send(screen(hits, HitProvider.screens.postCollection));
-                            }
+                        if (_.size(hits) === 1) {
+                            return res.send(screen(hits[0], HitProvider.screens.postModel));
                         } else {
-                            if (err.name === 'SchemaError') {
-                                res.statusCode = 400;
-
-                                return res.send({ errors: err.errors});
-                            } else if (err.name === 'ValidationError') {
-                                res.statusCode = 400;
-
-                                return res.send({ errors: errorHelper(err)});
-                            } else {
-                                res.statusCode = 500;
-                                log.error('Internal error(%d): %s', res.statusCode, err.message);
-
-                                return res.send({ error: 'Server error' });
-                            }
+                            return res.send(screen(hits, HitProvider.screens.postCollection));
                         }
-                    });
-                } else {
-                    res.statusCode = 400;
-                    if (!_.size(hits)) {
-                        return res.send({ error: 'Empty request' });
                     } else {
-                        return res.send({ error: 'Server error' });
+                        return errorHelper(err, res);
                     }
-                }
+                });
             },
             get: function(req, res) {
                 return HitProvider.getById(req.params.id, function(err, hit) {

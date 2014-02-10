@@ -77,8 +77,20 @@
             }
         };
 
-        EventProvider.prototype.saveMultiple = function(events, callback) {
-            var toSave = [];
+        EventProvider.prototype.saveMultiple = function(data, callback) {
+            var toSave = [], events = [];
+
+            if (_.isArray(data)) {
+                events = _.map(data, function(object) {
+                    return object;
+                });
+            } else {
+                events = [data];
+            }
+
+            if (!_.size(events)) {
+                return callback({name: 'Empty'});
+            }
 
             toSave = _.map(events, function(event) {
                 return function(cb) {

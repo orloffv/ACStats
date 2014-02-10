@@ -87,8 +87,20 @@
             }
         };
 
-        HitProvider.prototype.saveMultiple = function(hits, callback) {
-            var toSave = [];
+        HitProvider.prototype.saveMultiple = function(data, callback) {
+            var toSave = [], hits = [];
+
+            if (_.isArray(data)) {
+                hits = _.map(data, function(object) {
+                    return object;
+                });
+            } else {
+                hits = [data];
+            }
+
+            if (!_.size(hits)) {
+                return callback({name: 'Empty'});
+            }
 
             toSave = _.map(hits, function(hit) {
                 return function(cb) {

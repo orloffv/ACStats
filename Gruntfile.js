@@ -28,7 +28,7 @@ module.exports = function(grunt) {
                         'app/libs/**/*.js',
                         'app/models/**/*.js',
                         'app/routes/**/*.js',
-                        'app/data-provider/**/*.js'
+                        'app/data-providers/**/*.js'
                     ]
                 }
             }
