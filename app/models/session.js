@@ -7,8 +7,8 @@
         var Schema   = mongoose.Schema;
 
         var Session = new Schema({
-            createdAt: { type: Date, default: Date.now },
-            user:{ type: Schema.Types.ObjectId, ref: 'User' },
+            createdAt: {type: Date, default: Date.now},
+            user:{type: Schema.Types.ObjectId, ref: 'User'},
             server: {type: Schema.Types.ObjectId, ref: 'Server'}
         });
 

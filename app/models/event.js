@@ -7,10 +7,10 @@
         var Schema   = mongoose.Schema;
 
         var Event = new Schema({
-            name: { type: String, required: true },
-            createdAt: { type: Date, default: Date.now },
+            name: {type: String, required: true, index: true},
+            createdAt: {type: Date, default: Date.now},
             additional: Schema.Types.Mixed,
-            user : { type: Schema.Types.ObjectId, ref: 'User' },
+            user : {type: Schema.Types.ObjectId, ref: 'User'},
             server: {type: Schema.Types.ObjectId, ref: 'Server'}
         });
 
@@ -78,11 +78,15 @@
                 groupedModel
             ],
             postModel: {
-                id: true
+                id: true,
+                server: true,
+                user: true
             },
             postCollection: [
                 {
-                    id: true
+                    id: true,
+                    server: true,
+                    user: true
                 }
             ]
         };

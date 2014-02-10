@@ -7,7 +7,7 @@
         var Schema   = mongoose.Schema;
 
         var Server = new Schema({
-            name: { type: String, required: true },
+            name: {type: String, required: true, index: true, unique: true},
             users: [{ type: Schema.Types.ObjectId, ref: 'User'}]
         });
 

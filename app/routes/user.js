@@ -3,7 +3,7 @@
     module.exports = function(app, mongoose, log) {
         var _          = require('underscore');
 
-        var UserProvider = require('../data-provider/user')(mongoose, log);
+        var UserProvider = require('../data-providers/user')(mongoose, log);
         var errorHelper = require('mongoose-error-helper').errorHelper;
         var screen = require('screener').screen;
         var mapping = require('./../libs/mapping');

@@ -3,7 +3,7 @@
     module.exports = function(app, mongoose, log) {
         var _          = require('underscore');
 
-        var EventProvider = require('../data-provider/event')(mongoose, log);
+        var EventProvider = require('../data-providers/event')(mongoose, log);
         var errorHelper = require('mongoose-error-helper').errorHelper;
         var screen = require('screener').screen;
         var mapping = require('./../libs/mapping');
@@ -33,10 +33,17 @@
                     EventProvider.saveMultiple(events, function(err, events) {
                         if (!err) {
                             res.statusCode = 201;
-
-                            return res.send(screen(events, EventProvider.screens.postCollection));
+                            if (_.size(events) === 1) {
+                                return res.send(screen(events[0], EventProvider.screens.postModel));
+                            } else {
+                                return res.send(screen(events, EventProvider.screens.postCollection));
+                            }
                         } else {
-                            if(err.name === 'ValidationError') {
+                            if (err.name === 'SchemaError') {
+                                res.statusCode = 400;
+
+                                return res.send({ errors: err.errors});
+                            } else if(err.name === 'ValidationError') {
                                 res.statusCode = 400;
 
                                 return res.send({ errors: errorHelper(err)});
