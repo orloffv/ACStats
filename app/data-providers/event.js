@@ -78,7 +78,7 @@
         };
 
         EventProvider.prototype.saveMultiple = function(data, callback) {
-            var toSave = [], events = [];
+            var toSave = [], events = [],  that = this;
 
             if (_.isArray(data)) {
                 events = _.map(data, function(object) {
@@ -94,7 +94,7 @@
 
             toSave = _.map(events, function(event) {
                 return function(cb) {
-                    return EventProvider.prototype.save(event, cb);
+                    return that.save(event, cb);
                 };
             });
 

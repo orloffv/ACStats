@@ -88,7 +88,7 @@
         };
 
         HitProvider.prototype.saveMultiple = function(data, callback) {
-            var toSave = [], hits = [];
+            var toSave = [], hits = [], that = this;
 
             if (_.isArray(data)) {
                 hits = _.map(data, function(object) {
@@ -104,7 +104,7 @@
 
             toSave = _.map(hits, function(hit) {
                 return function(cb) {
-                    return HitProvider.prototype.save(hit, cb);
+                    return that.save(hit, cb);
                 };
             });
 

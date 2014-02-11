@@ -67,7 +67,7 @@
         };
 
         SessionProvider.prototype.saveMultiple = function(data, callback) {
-            var toSave = [], sessions = [];
+            var toSave = [], sessions = [], that = this;
 
             if (_.isArray(data)) {
                 sessions = _.map(data, function(object) {
@@ -83,7 +83,7 @@
 
             toSave = _.map(sessions, function(session) {
                 return function(cb) {
-                    return SessionProvider.prototype.save(session, cb);
+                    return that.save(session, cb);
                 };
             });
 
