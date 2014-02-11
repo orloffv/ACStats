@@ -18,7 +18,7 @@
         };
 
         SessionProvider.prototype.save = function (session, callback) {
-            ServerModel.findOrCreate(session.server, function(err, server, serverCreated) {
+            ServerModel.findOrCreate({name: session.server.name}, function(err, server, serverCreated) {
                 UserModel.findOrCreate({name: session.user.name, server: server.id}, {additional: session.user.additional}, function(err, user, userCreated) {
                     session.server = server.id;
                     session.user = user.id;

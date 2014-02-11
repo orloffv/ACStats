@@ -26,7 +26,7 @@
         EventProvider.prototype.save = function(event, callback) {
             var eventValidate = validate(event, EventSchema);
             if (!_.size(eventValidate.errors)) {
-                ServerModel.findOrCreate(event.server, function(err, server, serverCreated) {
+                ServerModel.findOrCreate({name: event.server.name}, function(err, server, serverCreated) {
                     UserModel.findOrCreate({name: event.user.name, server: server.id}, {additional: event.user.additional}, function(err, user, userCreated) {
                         event.server = server.id;
                         event.user = user.id;

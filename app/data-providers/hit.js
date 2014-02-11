@@ -23,7 +23,7 @@
         HitProvider.prototype.save = function (hit, callback) {
             var hitValidate = validate(hit, HitSchema);
             if (!_.size(hitValidate.errors)) {
-                ServerModel.findOrCreate(hit.server, function(err, server, serverCreated) {
+                ServerModel.findOrCreate({name: hit.server.name}, function(err, server, serverCreated) {
                     UserModel.findOrCreate({name: hit.user.name, server: server.id}, {additional: hit.user.additional}, function(err, user, userCreated) {
                         hit.server = server.id;
                         hit.user = user.id;

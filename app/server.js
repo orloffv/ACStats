@@ -15,7 +15,7 @@
         }
 
         serverInstance.listen(port, function() {
-            if (!app.get('mongoose').isConnected) {
+            if (!app.get('mongoose').isConnected()) {
                 app.get('mongoose').connectServer();
             }
 
