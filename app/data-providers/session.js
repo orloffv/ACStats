@@ -4,8 +4,8 @@
         var _          = require('underscore');
         var async      = require('async');
         var SessionModel = mongoose.model('Session');
-        var ServerModel = mongoose.model('Server');
-        var UserModel = mongoose.model('User');
+        var ServerProvider = require('./server')(mongoose, log);
+        var UserProvider = require('./user')(mongoose, log);
 
         var SessionProvider = function () {};
 
@@ -17,9 +17,13 @@
             SessionModel.findById(id).populate('user server').exec(callback);
         };
 
+        SessionProvider.prototype.findOrCreate = function(sessionId, serverId, userId, callback) {
+            SessionModel.findOrCreate({id: sessionId}, {server: serverId, user: userId}, callback);
+        };
+
         SessionProvider.prototype.save = function (session, callback) {
-            ServerModel.findOrCreate({name: session.server.name}, function(err, server, serverCreated) {
-                UserModel.findOrCreate({name: session.user.name, server: server.id}, {additional: session.user.additional}, function(err, user, userCreated) {
+            ServerProvider.findOrCreate(session.server.name, function(err, server, serverCreated) {
+                UserProvider.findOrCreate(session.user.name, server.id, {additional: session.user.additional}, function(err, user, userCreated) {
                     session.server = server.id;
                     session.user = user.id;
 
@@ -27,26 +31,22 @@
                         if (!err) {
                             var toSave = {};
 
-                            if (_.isArray(user.sessions)) {
-                                user.sessions.push(session.id);
+                            if (_.isNumber(user.sessions)) {
+                                user.sessions++;
                             } else {
-                                user.sessions = [session.id];
+                                user.sessions = 1;
                             }
-
-                            user.sessions = _.uniq(user.sessions);
 
                             toSave.user = function(callback) {
                                 user.save(callback);
                             };
 
                             if (serverCreated || userCreated) {
-                                if (_.isArray(server.users)) {
-                                    server.users.push(user.id);
+                                if (_.isNumber(server.users)) {
+                                    server.users++;
                                 } else {
-                                    server.users = [user.id];
+                                    server.users = 1;
                                 }
-
-                                server.users = _.uniq(server.users);
 
                                 toSave.server = function(callback) {
                                     server.save(callback);

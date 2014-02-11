@@ -15,6 +15,10 @@
             UserModel.findById(id).populate('user server').exec(callback);
         };
 
+        UserProvider.prototype.findOrCreate = function(name, serverId, updateOptions, callback) {
+            UserModel.findOrCreate({name: name, server: serverId}, updateOptions, callback);
+        };
+
         UserProvider.prototype.screens = UserModel.screens;
 
         return new UserProvider();

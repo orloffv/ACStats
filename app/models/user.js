@@ -10,9 +10,9 @@
             name: {type: String, required: true, index: true},
             additional: Schema.Types.Mixed,
             server: {type: Schema.Types.ObjectId, ref: 'Server'},
-            hits: [{type: Schema.Types.ObjectId, ref: 'Hit'}],
-            sessions: [{type: Schema.Types.ObjectId, ref: 'Session'}],
-            events: [{type: Schema.Types.ObjectId, ref: 'Event'}]
+            hits: {type: Number},
+            sessions: {type: Number},
+            events: {type: Number}
         });
 
         User.plugin(findOrCreate);

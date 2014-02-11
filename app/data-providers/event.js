@@ -5,8 +5,8 @@
         var async      = require('async');
         var validate = require('jsonschema').validate;
         var EventModel = mongoose.model('Event');
-        var UserModel = mongoose.model('User');
-        var ServerModel = mongoose.model('Server');
+        var ServerProvider = require('./server')(mongoose, log);
+        var UserProvider = require('./user')(mongoose, log);
         var EventSchema = require('./schemas/event.json');
 
         var EventProvider = function () {};
@@ -26,8 +26,8 @@
         EventProvider.prototype.save = function(event, callback) {
             var eventValidate = validate(event, EventSchema);
             if (!_.size(eventValidate.errors)) {
-                ServerModel.findOrCreate({name: event.server.name}, function(err, server, serverCreated) {
-                    UserModel.findOrCreate({name: event.user.name, server: server.id}, {additional: event.user.additional}, function(err, user, userCreated) {
+                ServerProvider.findOrCreate(event.server.name, function(err, server, serverCreated) {
+                    UserProvider.findOrCreate(event.user.name, server.id, {additional: event.user.additional}, function(err, user, userCreated) {
                         event.server = server.id;
                         event.user = user.id;
 
@@ -35,26 +35,22 @@
                             if (!err) {
                                 var toSave = {};
 
-                                if (_.isArray(user.events)) {
-                                    user.events.push(event.id);
+                                if (_.isNumber(user.events)) {
+                                    user.events++;
                                 } else {
-                                    user.events = [event.id];
+                                    user.events = 1;
                                 }
-
-                                user.events = _.uniq(user.events);
 
                                 toSave.user = function(callback) {
                                     user.save(callback);
                                 };
 
                                 if (serverCreated || userCreated) {
-                                    if (_.isArray(server.users)) {
-                                        server.users.push(user.id);
+                                    if (_.isNumber(server.users)) {
+                                        server.users++;
                                     } else {
-                                        server.users = [user.id];
+                                        server.users = 1;
                                     }
-
-                                    server.users = _.uniq(server.users);
 
                                     toSave.server = function(callback) {
                                         server.save(callback);

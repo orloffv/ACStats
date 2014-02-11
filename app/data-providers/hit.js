@@ -5,10 +5,10 @@
         var async      = require('async');
         var validate = require('jsonschema').validate;
         var HitModel = mongoose.model('Hit');
-        var UserModel = mongoose.model('User');
-        var SessionModel = mongoose.model('Session');
-        var ServerModel = mongoose.model('Server');
         var HitSchema = require('./schemas/hit.json');
+        var ServerProvider = require('./server')(mongoose, log);
+        var UserProvider = require('./user')(mongoose, log);
+        var SessionProvider = require('./session')(mongoose, log);
 
         var HitProvider = function () {};
 
@@ -23,33 +23,29 @@
         HitProvider.prototype.save = function (hit, callback) {
             var hitValidate = validate(hit, HitSchema);
             if (!_.size(hitValidate.errors)) {
-                ServerModel.findOrCreate({name: hit.server.name}, function(err, server, serverCreated) {
-                    UserModel.findOrCreate({name: hit.user.name, server: server.id}, {additional: hit.user.additional}, function(err, user, userCreated) {
-                        hit.server = server.id;
-                        hit.user = user.id;
-                        SessionModel.findOrCreate({id: hit.session}, {server: hit.server, user: hit.user}, function(err, session, sessionCreated) {
+                ServerProvider.findOrCreate(hit.server.name, function(err, server, serverCreated) {
+                    UserProvider.findOrCreate(hit.user.name, server.id, {additional: hit.user.additional}, function(err, user, userCreated) {
+                        SessionProvider.findOrCreate(hit.session, server.id, user.id, function(err, session, sessionCreated) {
                             hit.session = session.id;
+                            hit.server = server.id;
+                            hit.user = user.id;
 
                             new HitModel(hit).save(function (err, hit) {
                                 if (!err) {
                                     var toSave = {};
 
-                                    if (_.isArray(user.hits)) {
-                                        user.hits.push(hit.id);
+                                    if (_.isNumber(user.hits)) {
+                                        user.hits++;
                                     } else {
-                                        user.hits = [hit.id];
+                                        user.hits = 1;
                                     }
 
-                                    user.hits = _.uniq(user.hits);
-
                                     if (sessionCreated) {
-                                        if (_.isArray(user.sessions)) {
-                                            user.sessions.push(hit.session);
+                                        if (_.isNumber(user.sessions)) {
+                                            user.sessions++;
                                         } else {
-                                            user.sessions = [hit.session];
+                                            user.sessions = 1;
                                         }
-
-                                        user.sessions = _.uniq(user.sessions);
                                     }
 
                                     toSave.user = function(callback) {
@@ -57,13 +53,11 @@
                                     };
 
                                     if (serverCreated || userCreated) {
-                                        if (_.isArray(server.users)) {
-                                            server.users.push(user.id);
+                                        if (_.isNumber(server.users)) {
+                                            server.users++;
                                         } else {
-                                            server.users = [user.id];
+                                            server.users = 1;
                                         }
-
-                                        server.users = _.uniq(server.users);
 
                                         toSave.server = function(callback) {
                                             server.save(callback);
