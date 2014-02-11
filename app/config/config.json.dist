@@ -1,9 +1,16 @@
 {
-    "port" : 3000,
     "mongoose": {
         "uri": "mongodb://"
     },
     "log": {
         "file": "app/logs/log.txt"
+    },
+    "https": {
+        "key": "app/fixtures/production/keys/key.pem",
+        "cert": "app/fixtures/production/keys/cert.pem",
+        "port": 3001
+    },
+    "http": {
+        "port": 3000
     }
 }

@@ -13,11 +13,16 @@
                 log.error('connection error:', err.message);
                 process.exit(1);
             });
+
             db.once('open', function callback () {});
         };
 
         mongoose.disconnectServer = function(callback) {
             mongoose.disconnect(callback);
+        };
+
+        mongoose.isConnected = function() {
+            return mongoose.connection.readyState;
         };
 
         mongoose.dropAllCollections = function(callback) {

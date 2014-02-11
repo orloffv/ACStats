@@ -53,7 +53,6 @@
         }, data);
     };
 
-
     before(function(done) {
         mongoose.connect(app.get('config').get('mongoose:uri'), done);
     });

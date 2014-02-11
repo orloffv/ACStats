@@ -26,7 +26,6 @@
         });
 
         // all environments
-        app.set('port', config.get('port'));
         app.set('log', log);
         app.use(express.json());
         app.use(express.urlencoded());
