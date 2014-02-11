@@ -1,6 +1,7 @@
 (function () {
     "use strict";
     var winston = require('winston');
+    require('winston-rollbar').Rollbar;
 
     function getLogger(module, config) {
         var path = module.filename.split('/').slice(-2).join('/'); //отобразим метку с именем файла, который выводит сообщение
@@ -24,6 +25,16 @@
                     level: 'warn'
                 })
             );
+
+
+            if (config.get('rollbarAccessToken')) {
+                transports.push(
+                    new winston.transports.Rollbar({
+                        rollbarAccessToken: config.get('rollbarAccessToken'),
+                        level: 'warn'
+                    })
+                );
+            }
         }
 
         return new winston.Logger({

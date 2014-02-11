@@ -34,8 +34,10 @@
         createServer(httpsServer, app, config.get('https').port, httpsOptions);
     }
 
-    var httpServer = require('http');
-    createServer(httpServer, app, config.get('http').port);
+    if (config.get('http')) {
+        var httpServer = require('http');
+        createServer(httpServer, app, config.get('http').port);
+    }
 
     process.on('exit', function (){
         app.get('mongoose').disconnectServer();
