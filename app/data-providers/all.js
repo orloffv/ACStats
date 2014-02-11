@@ -7,11 +7,17 @@
         var HitProvider = require('./hit')(mongoose, log);
         var EventProvider = require('./event')(mongoose, log);
         var SessionProvider = require('./session')(mongoose, log);
+        var dateHelper = require('./../libs/date-helper')();
 
         var AllProvider = function () {};
 
         AllProvider.prototype.saveMultiple = function(data, callback) {
-            var toSave = {};
+            var toSave = {}, timestamp, currentTimestamp = dateHelper.getTimestamp();
+
+            if (data && _.isObject(data) && data.timestamp) {
+                timestamp = data.timestamp;
+                delete data.timestamp;
+            }
 
             if (!_.size(data) || !_.isObject(data)) {
                 return callback({name: 'Empty'});
@@ -32,7 +38,9 @@
                                     dataProviderSave = SessionProvider.save;
                                 }
 
-                                return dataProviderSave(item, cb);
+                                var createdAt = dateHelper.getCreatedAt(timestamp, item.createdTimestamp, currentTimestamp);
+
+                                return dataProviderSave(_.extend(item, {createdAt: createdAt}), cb);
                             }
                         );
                     });
