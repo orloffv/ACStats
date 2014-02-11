@@ -5,20 +5,38 @@
         _ = require('underscore');
 
     module.exports = function(mongoose, log, config) {
+        var db = mongoose.connection;
+
+        db.on('error', function (err) {
+            log.error('connection error:', err.message);
+            mongoose.reconnectServer();
+        });
+
+        db.once('open', function callback () {
+            mongoose.reconnected = 0;
+        });
+
+        mongoose.reconnected = 0;
+
         mongoose.connectServer = function(callback) {
-            mongoose.connect(config.get('mongoose:uri'), callback);
-            var db = mongoose.connection;
-
-            db.on('error', function (err) {
-                log.error('connection error:', err.message);
-                process.exit(1);
-            });
-
-            db.once('open', function callback () {});
+            mongoose.connect(config.get('mongoose:uri'), {server:{auto_reconnect:true}}, callback);
         };
 
         mongoose.disconnectServer = function(callback) {
             mongoose.disconnect(callback);
+        };
+
+        mongoose.reconnectServer = function(callback) {
+            mongoose.reconnected++;
+            if (mongoose.reconnected <= 5) {
+                mongoose.disconnect(mongoose.connectServer(callback));
+            } else {
+                mongoose.disconnectServer(
+                    function() {
+                        process.exit(1);
+                    }
+                );
+            }
         };
 
         mongoose.isConnected = function() {
