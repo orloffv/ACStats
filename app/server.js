@@ -20,26 +20,27 @@
             }
 
             console.log('Express server listening on port ' + port);
-            console.log('For exit: press ctrl+c');
         });
     };
+
+    console.log('For exit: press ctrl+c');
 
     if (config.get('https')) {
         var httpsServer = require('https');
         var fs = require('fs');
         var httpsOptions = {};
-        httpsOptions.key = fs.readFileSync(config.get('https').key);
-        httpsOptions.cert = fs.readFileSync(config.get('https').cert);
+        httpsOptions.key = fs.readFileSync(config.get('https:key'));
+        httpsOptions.cert = fs.readFileSync(config.get('https:cert'));
 
-        createServer(httpsServer, app, config.get('https').port, httpsOptions);
+        createServer(httpsServer, app, config.get('https:port'), httpsOptions);
     }
 
     if (config.get('http')) {
         var httpServer = require('http');
-        createServer(httpServer, app, config.get('http').port);
+        createServer(httpServer, app, config.get('http:port'));
     }
 
-    process.on('exit', function (){
+    process.on('exit', function() {
         app.get('mongoose').disconnectServer();
     });
 })();

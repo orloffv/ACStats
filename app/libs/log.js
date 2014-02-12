@@ -18,7 +18,7 @@
             );
         }
 
-        if (config.get('environment') !== 'testing') {
+        if (config.get('log:file')) {
             transports.push(
                 new winston.transports.File({
                     filename: config.get('log:file'),
@@ -31,7 +31,10 @@
                 transports.push(
                     new winston.transports.Rollbar({
                         rollbarAccessToken: config.get('rollbarAccessToken'),
-                        level: 'warn'
+                        level: 'warn',
+                        rollbarConfig: {
+                            environment: config.get('environment')
+                        }
                     })
                 );
             }
