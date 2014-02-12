@@ -15,9 +15,7 @@
         }
 
         serverInstance.listen(port, function() {
-            if (!app.get('mongoose').isConnected()) {
-                app.get('mongoose').connectServer();
-            }
+            app.get('mongoose').connectServer();
 
             console.log('Express server listening on port ' + port);
         });
@@ -39,8 +37,4 @@
         var httpServer = require('http');
         createServer(httpServer, app, config.get('http:port'));
     }
-
-    process.on('exit', function() {
-        app.get('mongoose').disconnectServer();
-    });
 })();

@@ -16,6 +16,10 @@
             HitModel.find(where).populate('user server').exec(callback);
         };
 
+        HitProvider.prototype.findAllWithGroupByUrl = function(where, callback) {
+            HitModel.findAllWithGroupByUrl(where, callback);
+        };
+
         HitProvider.prototype.getById = function(id, callback) {
             HitModel.findById(id).populate('user server').exec(callback);
         };

@@ -57,6 +57,23 @@
                         return res.send({ error: 'Server error' });
                     }
                 });
+            },
+            listWithFilerGrouped: function(where, req, res) {
+                return HitProvider.findAllWithGroupByUrl(where, function(err, hits) {
+                    if (!err) {
+                        return res.send(screen(hits, HitProvider.screens.groupedCollection));
+                    } else {
+                        res.statusCode = 500;
+                        log.error('Internal error(%d): %s', res.statusCode, err.message);
+                        return res.send({ error: 'Server error' });
+                    }
+                });
+            },
+            listByUserGrouped: function(req, res) {
+                return routes.listWithFilerGrouped({user: req.params.id}, req, res);
+            },
+            listByServerGrouped: function(req, res) {
+                return routes.listWithFilerGrouped({server: req.params.id}, req, res);
             }
         };
 
@@ -66,5 +83,7 @@
         app.get('/api/users/:id/hits', routes.listByUser);
         app.get('/api/servers/:id/hits', routes.listByServer);
         app.get('/api/sessions/:id/hits', routes.listBySession);
+        app.get('/api/users/:id/hits/grouped', routes.listByUserGrouped);
+        app.get('/api/servers/:id/hits/grouped', routes.listByServerGrouped);
     };
 })();

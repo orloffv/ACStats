@@ -7,12 +7,12 @@
     module.exports = function(mongoose, log, config) {
         var db = mongoose.connection;
 
-        db.on('error', function (err) {
+        db.on('error', function(err) {
             log.error('connection error:', err.message);
             //mongoose.reconnectServer();
         });
 
-        db.once('open', function callback () {
+        db.once('open', function() {
             log.debug('connection open');
             mongoose.reconnected = 0;
         });

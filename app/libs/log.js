@@ -1,7 +1,7 @@
 (function () {
     "use strict";
     var winston = require('winston');
-    require('winston-rollbar').Rollbar;
+    require('winston-rollbar');
 
     function getLogger(module, config) {
         var path = module.filename.split('/').slice(-2).join('/'); //отобразим метку с именем файла, который выводит сообщение

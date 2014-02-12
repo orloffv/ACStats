@@ -66,6 +66,20 @@
         app.set('mongoose', mongoose);
         app.set('config', config);
 
+        process.on('exit', function() {
+            app.get('mongoose').disconnectServer();
+        });
+
+        process.on('uncaughtException', function(err) {
+            app.get('log').error('Internal error: %s', err.message, err);
+        });
+
+        process.on('SIGINT', function() {
+            app.get('mongoose').disconnectServer(function() {
+                process.exit(0);
+            });
+        });
+
         return app;
     };
 })();
