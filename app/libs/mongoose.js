@@ -9,17 +9,36 @@
 
         db.on('error', function (err) {
             log.error('connection error:', err.message);
-            mongoose.reconnectServer();
+            //mongoose.reconnectServer();
         });
 
         db.once('open', function callback () {
+            log.debug('connection open');
             mongoose.reconnected = 0;
+        });
+
+        db.on('disconnected', function () {
+            log.debug('connection disconnected');
+            mongoose.connectServer();
         });
 
         mongoose.reconnected = 0;
 
         mongoose.connectServer = function(callback) {
-            mongoose.connect(config.get('mongoose:uri'), {server:{auto_reconnect:true}}, callback);
+            if (!mongoose.isConnected()) {
+                mongoose.connect(
+                    config.get('mongoose:uri'),
+                    {
+                        server: {
+                            auto_reconnect: true,
+                            poolSize: 5,
+                            socketOptions: {
+                                keepAlive: 1
+                            }
+                        }
+                    },
+                    callback);
+            }
         };
 
         mongoose.disconnectServer = function(callback) {
@@ -29,7 +48,7 @@
         mongoose.reconnectServer = function(callback) {
             mongoose.reconnected++;
             if (mongoose.reconnected <= 5) {
-                mongoose.disconnect(mongoose.connectServer(callback));
+                mongoose.disconnectServer(mongoose.connectServer(callback));
             } else {
                 mongoose.disconnectServer(
                     function() {
