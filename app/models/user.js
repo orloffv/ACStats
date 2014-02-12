@@ -28,7 +28,10 @@
             server: {
                 id: true,
                 name: true
-            }
+            },
+            hits: true,
+            events: true,
+            sessions: true
         };
 
         UserModel.screens = {

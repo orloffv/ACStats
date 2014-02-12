@@ -17,7 +17,8 @@
 
         var screenModel = {
             id: true,
-            name: true
+            name: true,
+            users:  true
         };
 
         ServerModel.screens = {
