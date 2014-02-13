@@ -8,6 +8,8 @@
 
         var Session = new Schema({
             createdAt: {type: Date, default: Date.now},
+            additional: Schema.Types.Mixed,
+            timing: Schema.Types.Mixed,
             user: {type: Schema.Types.ObjectId, ref: 'User'},
             server: {type: Schema.Types.ObjectId, ref: 'Server'}
         });
@@ -20,6 +22,7 @@
             id: true,
             createdAt: true,
             additional: true,
+            timing: true,
             user: {
                 id: true,
                 name: true,

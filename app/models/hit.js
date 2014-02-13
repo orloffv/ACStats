@@ -10,6 +10,7 @@
             url: {type: String, required: true, index: true},
             createdAt: {type: Date, default: Date.now},
             additional: Schema.Types.Mixed,
+            timing: Schema.Types.Mixed,
             user: {type: Schema.Types.ObjectId, ref: 'User'},
             server: {type: Schema.Types.ObjectId, ref: 'Server'},
             session: {type: Schema.Types.ObjectId, ref: 'Session'}
@@ -50,6 +51,7 @@
             url: true,
             createdAt: true,
             additional: true,
+            timing: true,
             user: {
                 id: true,
                 name: true,
@@ -66,7 +68,6 @@
             count: true,
             firstAt: true,
             lastAt: true,
-            ids: true,
             users: true
         };
 

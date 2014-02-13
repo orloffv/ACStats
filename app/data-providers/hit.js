@@ -8,7 +8,6 @@
         var HitSchema = require('./schemas/hit.json');
         var ServerProvider = require('./server')(mongoose, log);
         var UserProvider = require('./user')(mongoose, log);
-        var SessionProvider = require('./session')(mongoose, log);
 
         var HitProvider = function () {};
 
@@ -29,54 +28,43 @@
             if (!_.size(hitValidate.errors)) {
                 ServerProvider.findOrCreate(hit.server.name, function(err, server, serverCreated) {
                     UserProvider.findOrCreate(hit.user.name, server.id, {additional: hit.user.additional}, function(err, user, userCreated) {
-                        SessionProvider.findOrCreate(hit.session, server.id, user.id, function(err, session, sessionCreated) {
-                            hit.session = session.id;
-                            hit.server = server.id;
-                            hit.user = user.id;
+                        hit.server = server.id;
+                        hit.user = user.id;
 
-                            new HitModel(hit).save(function (err, hit) {
-                                if (!err) {
-                                    var toSave = {};
+                        new HitModel(hit).save(function (err, hit) {
+                            if (!err) {
+                                var toSave = {};
 
-                                    if (_.isNumber(user.hits)) {
-                                        user.hits++;
-                                    } else {
-                                        user.hits = 1;
-                                    }
-
-                                    if (sessionCreated) {
-                                        if (_.isNumber(user.sessions)) {
-                                            user.sessions++;
-                                        } else {
-                                            user.sessions = 1;
-                                        }
-                                    }
-
-                                    toSave.user = function(callback) {
-                                        user.save(callback);
-                                    };
-
-                                    if (serverCreated || userCreated) {
-                                        if (_.isNumber(server.users)) {
-                                            server.users++;
-                                        } else {
-                                            server.users = 1;
-                                        }
-
-                                        toSave.server = function(callback) {
-                                            server.save(callback);
-                                        };
-                                    }
-
-                                    async.parallel(toSave,
-                                        function(e, r) {
-                                            callback(err, hit);
-                                        }
-                                    );
+                                if (_.isNumber(user.hits)) {
+                                    user.hits++;
                                 } else {
-                                    callback(err, hit);
+                                    user.hits = 1;
                                 }
-                            });
+
+                                toSave.user = function(callback) {
+                                    user.save(callback);
+                                };
+
+                                if (serverCreated || userCreated) {
+                                    if (_.isNumber(server.users)) {
+                                        server.users++;
+                                    } else {
+                                        server.users = 1;
+                                    }
+
+                                    toSave.server = function(callback) {
+                                        server.save(callback);
+                                    };
+                                }
+
+                                async.parallel(toSave,
+                                    function(e, r) {
+                                        callback(err, hit);
+                                    }
+                                );
+                            } else {
+                                callback(err, hit);
+                            }
                         });
                     });
                 });

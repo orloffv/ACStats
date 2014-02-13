@@ -65,7 +65,6 @@
             count: true,
             firstAt: true,
             lastAt: true,
-            ids: true,
             users: true
         };
 
