@@ -41,6 +41,38 @@
             }, callback);
         };
 
+        Session.statics.getTimingByDateGrouped = function(where, callback) {
+            where.timing = {$gt:{}};
+            where['timing.loadPage'] = {$gte: 0};
+            where['timing.loadSecurity'] = {$gte: 0};
+            where['timing.loadJS'] = {$gte: 0};
+
+            return this.mapReduce({
+                map: function() {
+                    var key = this.createdAt.getFullYear() + '.' + (parseInt(this.createdAt.getMonth(), 10) + 1) + '.' + this.createdAt.getDate();
+                    var values = {loadPage: this.timing.loadPage, loadSecurity: this.timing.loadSecurity, loadJS: this.timing.loadJS};
+                    emit(key, values);
+                },
+                reduce: function(key, values) {
+                    var timing = {loadPage: 0, loadSecurity: 0, loadJS: 0, count: 0};
+
+                    values.forEach(function(v) {
+                        timing.loadPage += v.loadPage;
+                        timing.loadSecurity += v.loadSecurity;
+                        timing.loadJS += v.loadJS;
+                        timing.count++;
+                    });
+
+                    return timing;
+                },
+                query: where,
+                out: {
+                    inline:1
+                },
+                verbose: false
+            }, callback);
+        };
+
         Session.plugin(findOrCreate);
 
         var SessionModel = mongoose.model('Session', Session);

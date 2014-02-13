@@ -21,6 +21,10 @@
             SessionModel.countGrouped(where, parts, callback);
         };
 
+        SessionProvider.prototype.getTimingByDateGrouped = function(where, callback) {
+            SessionModel.getTimingByDateGrouped(where, callback);
+        };
+
         SessionProvider.prototype.count = function(where, callback) {
             SessionModel.count(where, callback);
         };

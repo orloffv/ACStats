@@ -96,6 +96,10 @@
             async.series(toFind, callback);
         };
 
+        StatisticProvider.prototype.findSessionTimingByDateGrouped = function(where, callback) {
+            SessionProvider.getTimingByDateGrouped(getWhere(where), callback);
+        };
+
         var screenModel = {
             sessions: true,
             events: true,
