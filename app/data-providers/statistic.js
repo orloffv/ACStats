@@ -59,7 +59,7 @@
         StatisticProvider.prototype.findAllByDateGrouped = function(where, callback) {
             var toFind = {};
 
-            _.each(['hits'], function(modelName) {
+            _.each(['hits', 'events', 'sessions'], function(modelName) {
                 var dataProviderFind;
                 if  (modelName === 'events') {
                     dataProviderFind = EventProvider.countGrouped;
@@ -69,17 +69,31 @@
                     dataProviderFind = SessionProvider.countGrouped;
                 }
 
+                var parts = 7;
                 toFind[modelName] = function(cb) {
-                    return dataProviderFind(getWhere(where), 7, cb);
+                    return dataProviderFind(getWhere(where), parts, function(err, result) {
+                        var returnResult = {};
+
+                        if (!err) {
+                            _.map(result, function(item) {
+                                returnResult[item._id] = item.value;
+                            });
+
+                            _(parts).times(function(key) {
+                                if (!returnResult[key + 1]) {
+                                    returnResult[key + 1] = 0;
+                                }
+                            });
+                        } else {
+                            returnResult = result;
+                        }
+
+                        cb(err, returnResult);
+                    });
                 };
             });
 
-            async.series(toFind,
-                function(err, items) {
-                    console.info(JSON.stringify(items));
-                    callback(err, items);
-                }
-            );
+            async.series(toFind, callback);
         };
 
         var screenModel = {
@@ -89,10 +103,7 @@
         };
 
         StatisticProvider.prototype.screens = {
-            models: screenModel,
-            collection: [
-                screenModel
-            ]
+            models: screenModel
         };
 
         return new StatisticProvider();

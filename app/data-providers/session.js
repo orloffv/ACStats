@@ -17,6 +17,10 @@
             SessionModel.findById(id).populate('user server').exec(callback);
         };
 
+        SessionProvider.prototype.countGrouped = function(where, parts, callback) {
+            SessionModel.countGrouped(where, parts, callback);
+        };
+
         SessionProvider.prototype.count = function(where, callback) {
             SessionModel.count(where, callback);
         };

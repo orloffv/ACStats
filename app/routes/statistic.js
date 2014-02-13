@@ -26,7 +26,7 @@
                 var where = {server: req.params.id, from: req.query.from, to: req.query.to};
                 return StatisticProvider.findAllByDateGrouped(where, function(err, statistics) {
                     if (!err) {
-                        return res.send(screen(statistics, StatisticProvider.screens.collection));
+                        return res.send(screen(statistics, StatisticProvider.screens.models));
                     } else {
                         res.statusCode = 500;
                         log.error('Internal error(%d): %s', res.statusCode, err.message);

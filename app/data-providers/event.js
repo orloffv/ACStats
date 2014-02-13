@@ -23,6 +23,10 @@
             EventModel.count(where, callback);
         };
 
+        EventProvider.prototype.countGrouped = function(where, parts, callback) {
+            EventModel.countGrouped(where, parts, callback);
+        };
+
         EventProvider.prototype.getById = function(id, callback) {
             EventModel.findById(id).populate('user server').exec(callback);
         };

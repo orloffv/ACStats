@@ -54,29 +54,25 @@
             var secondsEnd = moment(where.createdAt.$gte).format('X');
             var secondsInPart = Math.floor(periodSeconds / parts);
 
-            //((secondsEnd - currentSeconds) / secondsInPart)
-
-            return this.
-                aggregate(
-                {
-                    $project: {
-                        timestamp : "$createdAt"
-                    }
+            return this.mapReduce({
+                map: function() {
+                    //((secondsEnd - currentSeconds) / secondsInPart)
+                    var part = Math.abs(Math.floor((secondsEnd - (Date.parse(this.createdAt) / 1000)) / secondsInPart));
+                    emit(part, 1);
                 },
-                {
-                    $match: where
+                reduce: function(key, values) {
+                    return Array.sum(values);
                 },
-                {
-                    $group: {
-                        //_id: { year : { $year : '$createdAt' }},
-                        //_id: '$timestamp',
-                        _id: '$timestamp',
-                        count: { $sum: 1 }
-                    }
+                query: where,
+                out: {
+                    inline:1
                 },
-                {
-                    $sort: { count: -1 }
-                }, callback);
+                verbose: false,
+                scope: {
+                    secondsEnd: secondsEnd,
+                    secondsInPart: secondsInPart
+                }
+            }, callback);
         };
 
         var HitModel = mongoose.model('Hit', Hit);

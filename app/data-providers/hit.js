@@ -24,7 +24,7 @@
         };
 
         HitProvider.prototype.countGrouped = function(where, parts, callback) {
-            HitModel.countGrouped(where, parts ,callback);
+            HitModel.countGrouped(where, parts, callback);
         };
 
         HitProvider.prototype.getById = function(id, callback) {
