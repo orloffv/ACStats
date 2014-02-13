@@ -19,6 +19,10 @@
             EventModel.findAllWithGroupByName(where, callback);
         };
 
+        EventProvider.prototype.count = function(where, callback) {
+            EventModel.count(where, callback);
+        };
+
         EventProvider.prototype.getById = function(id, callback) {
             EventModel.findById(id).populate('user server').exec(callback);
         };

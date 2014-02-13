@@ -19,6 +19,14 @@
             HitModel.findAllWithGroupByUrl(where, callback);
         };
 
+        HitProvider.prototype.count = function(where, callback) {
+            HitModel.count(where, callback);
+        };
+
+        HitProvider.prototype.countGrouped = function(where, parts, callback) {
+            HitModel.countGrouped(where, parts ,callback);
+        };
+
         HitProvider.prototype.getById = function(id, callback) {
             HitModel.findById(id).populate('user server').exec(callback);
         };

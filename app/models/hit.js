@@ -2,6 +2,7 @@
     "use strict";
 
     var _ = require('underscore');
+    var moment = require('moment');
 
     module.exports = function(mongoose) {
         var Schema   = mongoose.Schema;
@@ -14,6 +15,10 @@
             user: {type: Schema.Types.ObjectId, ref: 'User'},
             server: {type: Schema.Types.ObjectId, ref: 'Server'},
             session: {type: Schema.Types.ObjectId, ref: 'Session'}
+        });
+
+        Hit.virtual('timestamp').get(function() {
+            return this.createdAt.getTime();
         });
 
         Hit.statics.findAllWithGroupByUrl = function(where, callback) {
@@ -37,6 +42,36 @@
                         lastAt: {$last: "$createdAt"},
                         ids: { $addToSet: "$_id" },
                         users: { $addToSet: "$user" }
+                    }
+                },
+                {
+                    $sort: { count: -1 }
+                }, callback);
+        };
+
+        Hit.statics.countGrouped = function(where, parts, callback) {
+            var periodSeconds = moment(where.createdAt.$lt).format('X') - moment(where.createdAt.$gte).format('X');
+            var secondsEnd = moment(where.createdAt.$gte).format('X');
+            var secondsInPart = Math.floor(periodSeconds / parts);
+
+            //((secondsEnd - currentSeconds) / secondsInPart)
+
+            return this.
+                aggregate(
+                {
+                    $project: {
+                        timestamp : "$createdAt"
+                    }
+                },
+                {
+                    $match: where
+                },
+                {
+                    $group: {
+                        //_id: { year : { $year : '$createdAt' }},
+                        //_id: '$timestamp',
+                        _id: '$timestamp',
+                        count: { $sum: 1 }
                     }
                 },
                 {

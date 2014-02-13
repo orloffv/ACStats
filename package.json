@@ -18,7 +18,8 @@
     "async": "~0.2.10",
     "mongoose-findorcreate": "~0.1.2",
     "jsonschema": "~0.4.0",
-    "winston-rollbar": "~0.1.1"
+    "winston-rollbar": "~0.1.1",
+    "moment": "~2.5.1"
   },
   "devDependencies": {
     "grunt": "~0.4.1",

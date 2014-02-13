@@ -17,6 +17,10 @@
             SessionModel.findById(id).populate('user server').exec(callback);
         };
 
+        SessionProvider.prototype.count = function(where, callback) {
+            SessionModel.count(where, callback);
+        };
+
         SessionProvider.prototype.findOrCreate = function(sessionId, serverId, userId, callback) {
             SessionModel.findOrCreate({id: sessionId}, {server: serverId, user: userId}, callback);
         };
