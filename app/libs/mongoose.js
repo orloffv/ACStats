@@ -4,6 +4,7 @@
     var async = require('async'),
         _ = require('underscore');
 
+
     module.exports = function(mongoose, log, config) {
         var db = mongoose.connection;
 

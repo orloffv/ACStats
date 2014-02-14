@@ -10,8 +10,7 @@
 
         var routes = {
             allByDate: function(req, res) {
-                var where = {server: req.params.id, from: req.query.from, to: req.query.to};
-                return StatisticProvider.findAllByDate(where, function(err, statistics) {
+                return StatisticProvider.findAllByDate({server: req.params.id}, {query:req.query}, function(err, statistics) {
                     if (!err) {
                         return res.send(screen(statistics, StatisticProvider.screens.models));
                     } else {
@@ -23,8 +22,7 @@
                 });
             },
             allByDateGrouped: function(req, res) {
-                var where = {server: req.params.id, from: req.query.from, to: req.query.to};
-                return StatisticProvider.findAllByDateGrouped(where, function(err, statistics) {
+                return StatisticProvider.findAllByDateGrouped({server: req.params.id}, {query:req.query}, function(err, statistics) {
                     if (!err) {
                         return res.send(screen(statistics, StatisticProvider.screens.models));
                     } else {
@@ -36,8 +34,7 @@
                 });
             },
             sessionTimingByDateGrouped: function(req, res) {
-                var where = {server: req.params.id, from: req.query.from, to: req.query.to};
-                return StatisticProvider.findSessionTimingByDateGrouped(where, function(err, statistics) {
+                return StatisticProvider.findSessionTimingByDateGrouped({server: req.params.id}, {query:req.query}, function(err, statistics) {
                     if (!err) {
                         return res.send(statistics);
                     } else {

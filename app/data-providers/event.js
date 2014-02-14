@@ -11,105 +11,100 @@
 
         var EventProvider = function () {};
 
-        EventProvider.prototype.findAll = function(where, callback) {
-            EventModel.find(where).populate('user server').exec(callback);
-        };
+        EventProvider.prototype = {
+            findAll: function(where, callback) {
+                EventModel.find(where).populate('user server').exec(callback);
+            },
+            findAllWithGroupByName: function(where, callback) {
+                EventModel.findAllWithGroupByName(where, callback);
+            },
+            count: function(where, callback) {
+                EventModel.count(where, callback);
+            },
+            countGrouped: function(where, parts, callback) {
+                EventModel.countGrouped(where, parts, callback);
+            },
+            getById: function(id, callback) {
+                EventModel.findById(id).populate('user server').exec(callback);
+            },
+            save: function(event, callback) {
+                var eventValidate = validate(event, EventSchema);
+                if (!_.size(eventValidate.errors)) {
+                    ServerProvider.findOrCreate(event.server.name, function(err, server, serverCreated) {
+                        UserProvider.findOrCreate(event.user.name, server.id, {additional: event.user.additional}, function(err, user, userCreated) {
+                            event.server = server.id;
+                            event.user = user.id;
 
-        EventProvider.prototype.findAllWithGroupByName = function(where, callback) {
-            EventModel.findAllWithGroupByName(where, callback);
-        };
+                            new EventModel(event).save(function (err, event) {
+                                if (!err) {
+                                    var toSave = {};
 
-        EventProvider.prototype.count = function(where, callback) {
-            EventModel.count(where, callback);
-        };
-
-        EventProvider.prototype.countGrouped = function(where, parts, callback) {
-            EventModel.countGrouped(where, parts, callback);
-        };
-
-        EventProvider.prototype.getById = function(id, callback) {
-            EventModel.findById(id).populate('user server').exec(callback);
-        };
-
-        EventProvider.prototype.save = function(event, callback) {
-            var eventValidate = validate(event, EventSchema);
-            if (!_.size(eventValidate.errors)) {
-                ServerProvider.findOrCreate(event.server.name, function(err, server, serverCreated) {
-                    UserProvider.findOrCreate(event.user.name, server.id, {additional: event.user.additional}, function(err, user, userCreated) {
-                        event.server = server.id;
-                        event.user = user.id;
-
-                        new EventModel(event).save(function (err, event) {
-                            if (!err) {
-                                var toSave = {};
-
-                                if (_.isNumber(user.events)) {
-                                    user.events++;
-                                } else {
-                                    user.events = 1;
-                                }
-
-                                toSave.user = function(callback) {
-                                    user.save(callback);
-                                };
-
-                                if (serverCreated || userCreated) {
-                                    if (_.isNumber(server.users)) {
-                                        server.users++;
+                                    if (_.isNumber(user.events)) {
+                                        user.events++;
                                     } else {
-                                        server.users = 1;
+                                        user.events = 1;
                                     }
 
-                                    toSave.server = function(callback) {
-                                        server.save(callback);
+                                    toSave.user = function(callback) {
+                                        user.save(callback);
                                     };
-                                }
 
-                                async.parallel(toSave,
-                                    function(e, r) {
-                                        callback(err, event);
+                                    if (serverCreated || userCreated) {
+                                        if (_.isNumber(server.users)) {
+                                            server.users++;
+                                        } else {
+                                            server.users = 1;
+                                        }
+
+                                        toSave.server = function(callback) {
+                                            server.save(callback);
+                                        };
                                     }
-                                );
-                            } else {
-                                callback(err, event);
-                            }
+
+                                    async.parallel(toSave,
+                                        function(e, r) {
+                                            callback(err, event);
+                                        }
+                                    );
+                                } else {
+                                    callback(err, event);
+                                }
+                            });
                         });
                     });
-                });
-            } else {
-                callback({name: 'SchemaError', errors: _.pluck(eventValidate.errors, 'stack')}, event);
-            }
-        };
-
-        EventProvider.prototype.saveMultiple = function(data, callback) {
-            var toSave = [], events = [],  that = this;
-
-            if (_.isArray(data)) {
-                events = _.map(data, function(object) {
-                    return object;
-                });
-            } else {
-                events = [data];
-            }
-
-            if (!_.size(events)) {
-                return callback({name: 'Empty'});
-            }
-
-            toSave = _.map(events, function(event) {
-                return function(cb) {
-                    return that.save(event, cb);
-                };
-            });
-
-            async.series(toSave,
-                function(err, events) {
-                    callback(err, events);
+                } else {
+                    callback({name: 'SchemaError', errors: _.pluck(eventValidate.errors, 'stack')}, event);
                 }
-            );
-        };
+            },
+            saveMultiple: function(data, callback) {
+                var toSave = [], events = [],  that = this;
 
-        EventProvider.prototype.screens = EventModel.screens;
+                if (_.isArray(data)) {
+                    events = _.map(data, function(object) {
+                        return object;
+                    });
+                } else {
+                    events = [data];
+                }
+
+                if (!_.size(events)) {
+                    return callback({name: 'Empty'});
+                }
+
+                toSave = _.map(events, function(event) {
+                    return function(cb) {
+                        return that.save(event, cb);
+                    };
+                });
+
+                async.series(toSave,
+                    function(err, events) {
+                        callback(err, events);
+                    }
+                );
+            },
+            screens: EventModel.screens
+        };
 
         return new EventProvider();
     };

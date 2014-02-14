@@ -9,104 +9,98 @@
 
         var SessionProvider = function () {};
 
-        SessionProvider.prototype.findAll = function (where, callback) {
-            SessionModel.find(where).populate('user server').exec(callback);
-        };
+        SessionProvider.prototype = {
+            findAll: function (where, callback) {
+                SessionModel.find(where).populate('user server').exec(callback);
+            },
+            getById: function(id, callback) {
+                SessionModel.findById(id).populate('user server').exec(callback);
+            },
+            countGrouped: function(where, parts, callback) {
+                SessionModel.countGrouped(where, parts, callback);
+            },
+            getTimingByDateGrouped: function(where, callback) {
+                SessionModel.getTimingByDateGrouped(where, callback);
+            },
+            count: function(where, callback) {
+                SessionModel.count(where, callback);
+            },
+            findOrCreate: function(sessionId, serverId, userId, callback) {
+                SessionModel.findOrCreate({id: sessionId}, {server: serverId, user: userId}, callback);
+            },
+            save: function (session, callback) {
+                ServerProvider.findOrCreate(session.server.name, function(err, server, serverCreated) {
+                    UserProvider.findOrCreate(session.user.name, server.id, {additional: session.user.additional}, function(err, user, userCreated) {
+                        session.server = server.id;
+                        session.user = user.id;
 
-        SessionProvider.prototype.getById = function(id, callback) {
-            SessionModel.findById(id).populate('user server').exec(callback);
-        };
+                        new SessionModel(session).save(function (err, session) {
+                            if (!err) {
+                                var toSave = {};
 
-        SessionProvider.prototype.countGrouped = function(where, parts, callback) {
-            SessionModel.countGrouped(where, parts, callback);
-        };
-
-        SessionProvider.prototype.getTimingByDateGrouped = function(where, callback) {
-            SessionModel.getTimingByDateGrouped(where, callback);
-        };
-
-        SessionProvider.prototype.count = function(where, callback) {
-            SessionModel.count(where, callback);
-        };
-
-        SessionProvider.prototype.findOrCreate = function(sessionId, serverId, userId, callback) {
-            SessionModel.findOrCreate({id: sessionId}, {server: serverId, user: userId}, callback);
-        };
-
-        SessionProvider.prototype.save = function (session, callback) {
-            ServerProvider.findOrCreate(session.server.name, function(err, server, serverCreated) {
-                UserProvider.findOrCreate(session.user.name, server.id, {additional: session.user.additional}, function(err, user, userCreated) {
-                    session.server = server.id;
-                    session.user = user.id;
-
-                    new SessionModel(session).save(function (err, session) {
-                        if (!err) {
-                            var toSave = {};
-
-                            if (_.isNumber(user.sessions)) {
-                                user.sessions++;
-                            } else {
-                                user.sessions = 1;
-                            }
-
-                            toSave.user = function(callback) {
-                                user.save(callback);
-                            };
-
-                            if (serverCreated || userCreated) {
-                                if (_.isNumber(server.users)) {
-                                    server.users++;
+                                if (_.isNumber(user.sessions)) {
+                                    user.sessions++;
                                 } else {
-                                    server.users = 1;
+                                    user.sessions = 1;
                                 }
 
-                                toSave.server = function(callback) {
-                                    server.save(callback);
+                                toSave.user = function(callback) {
+                                    user.save(callback);
                                 };
-                            }
 
-                            async.parallel(toSave,
-                                function(e, r) {
-                                    callback(err, session);
+                                if (serverCreated || userCreated) {
+                                    if (_.isNumber(server.users)) {
+                                        server.users++;
+                                    } else {
+                                        server.users = 1;
+                                    }
+
+                                    toSave.server = function(callback) {
+                                        server.save(callback);
+                                    };
                                 }
-                            );
-                        } else {
-                            callback(err, session);
-                        }
+
+                                async.parallel(toSave,
+                                    function(e, r) {
+                                        callback(err, session);
+                                    }
+                                );
+                            } else {
+                                callback(err, session);
+                            }
+                        });
                     });
                 });
-            });
-        };
+            },
+            saveMultiple: function(data, callback) {
+                var toSave = [], sessions = [], that = this;
 
-        SessionProvider.prototype.saveMultiple = function(data, callback) {
-            var toSave = [], sessions = [], that = this;
-
-            if (_.isArray(data)) {
-                sessions = _.map(data, function(object) {
-                    return object;
-                });
-            } else {
-                sessions = [data];
-            }
-
-            if (!_.size(sessions)) {
-                return callback({name: 'Empty'});
-            }
-
-            toSave = _.map(sessions, function(session) {
-                return function(cb) {
-                    return that.save(session, cb);
-                };
-            });
-
-            async.series(toSave,
-                function(err, sessions) {
-                    callback(err, sessions);
+                if (_.isArray(data)) {
+                    sessions = _.map(data, function(object) {
+                        return object;
+                    });
+                } else {
+                    sessions = [data];
                 }
-            );
-        };
 
-        SessionProvider.prototype.screens = SessionModel.screens;
+                if (!_.size(sessions)) {
+                    return callback({name: 'Empty'});
+                }
+
+                toSave = _.map(sessions, function(session) {
+                    return function(cb) {
+                        return that.save(session, cb);
+                    };
+                });
+
+                async.series(toSave,
+                    function(err, sessions) {
+                        callback(err, sessions);
+                    }
+                );
+            },
+            screens: SessionModel.screens
+        };
 
         return new SessionProvider();
     };

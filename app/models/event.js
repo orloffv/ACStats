@@ -5,6 +5,7 @@
     var moment = require('moment');
 
     module.exports = function(mongoose) {
+        var QueryHelper = require('./../libs/query-helper')(mongoose);
         var Schema   = mongoose.Schema;
 
         var Event = new Schema({
@@ -44,29 +45,7 @@
         };
 
         Event.statics.countGrouped = function(where, parts, callback) {
-            var periodSeconds = moment(where.createdAt.$lt).format('X') - moment(where.createdAt.$gte).format('X');
-            var secondsEnd = moment(where.createdAt.$gte).format('X');
-            var secondsInPart = Math.floor(periodSeconds / parts);
-
-            return this.mapReduce({
-                map: function() {
-                    //((secondsEnd - currentSeconds) / secondsInPart)
-                    var part = Math.abs(Math.floor((secondsEnd - (Date.parse(this.createdAt) / 1000)) / secondsInPart));
-                    emit(part, 1);
-                },
-                reduce: function(key, values) {
-                    return Array.sum(values);
-                },
-                query: where,
-                out: {
-                    inline:1
-                },
-                verbose: false,
-                scope: {
-                    secondsEnd: secondsEnd,
-                    secondsInPart: secondsInPart
-                }
-            }, callback);
+            QueryHelper.countGrouped(this, where, parts, callback);
         };
 
         var EventModel = mongoose.model('Event', Event);

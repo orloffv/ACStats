@@ -7,19 +7,18 @@
 
         var ServerProvider = function () {};
 
-        ServerProvider.prototype.findAll = function (callback) {
-            ServerModel.find({}).populate('user').exec(callback);
+        ServerProvider.prototype = {
+            findAll: function (callback) {
+                ServerModel.find({}).populate('user').exec(callback);
+            },
+            getById: function(id, callback) {
+                ServerModel.findById(id).populate('user server').exec(callback);
+            },
+            findOrCreate: function(name, callback) {
+                ServerModel.findOrCreate({name: name}, callback);
+            },
+            screens: ServerModel.screens
         };
-
-        ServerProvider.prototype.getById = function(id, callback) {
-            ServerModel.findById(id).populate('user server').exec(callback);
-        };
-
-        ServerProvider.prototype.findOrCreate = function(name, callback) {
-            ServerModel.findOrCreate({name: name}, callback);
-        };
-
-        ServerProvider.prototype.screens = ServerModel.screens;
 
         return new ServerProvider();
     };

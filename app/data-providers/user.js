@@ -7,19 +7,18 @@
 
         var UserProvider = function () {};
 
-        UserProvider.prototype.findAll = function (where, callback) {
-            UserModel.find(where).populate('server').exec(callback);
+        UserProvider.prototype = {
+            findAll: function (where, callback) {
+                UserModel.find(where).populate('server').exec(callback);
+            },
+            getById: function(id, callback) {
+                UserModel.findById(id).populate('user server').exec(callback);
+            },
+            findOrCreate: function(name, serverId, updateOptions, callback) {
+                UserModel.findOrCreate({name: name, server: serverId}, updateOptions, callback);
+            },
+            screens: UserModel.screens
         };
-
-        UserProvider.prototype.getById = function(id, callback) {
-            UserModel.findById(id).populate('user server').exec(callback);
-        };
-
-        UserProvider.prototype.findOrCreate = function(name, serverId, updateOptions, callback) {
-            UserModel.findOrCreate({name: name, server: serverId}, updateOptions, callback);
-        };
-
-        UserProvider.prototype.screens = UserModel.screens;
 
         return new UserProvider();
     };
