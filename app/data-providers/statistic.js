@@ -7,6 +7,7 @@
         var HitProvider = require('./hit')(mongoose, log);
         var EventProvider = require('./event')(mongoose, log);
         var SessionProvider = require('./session')(mongoose, log);
+        var UserProvider = require('./user')(mongoose, log);
         var QueryHelper = require('./../libs/query-helper')(mongoose);
 
         var StatisticProvider = function () {};
@@ -14,14 +15,18 @@
         var screenModel = {
             sessions: true,
             events: true,
-            hits: true
+            hits: true,
+            users_new: true,
+            users_last_hit: true,
+            companies: true,
+            companies_new: true
         };
 
         StatisticProvider.prototype = {
             findAllByDate: function(where, options, callback) {
                 var toFind = {};
 
-                _.each(['sessions', 'events', 'hits'], function(modelName) {
+                _.each(['sessions', 'events', 'hits', 'users_new', 'users_last_hit', 'companies', 'companies_new'], function(modelName) {
                     var dataProviderFind;
                     if  (modelName === 'events') {
                         dataProviderFind = EventProvider.count;
@@ -29,18 +34,26 @@
                         dataProviderFind = HitProvider.count;
                     } else if (modelName === 'sessions') {
                         dataProviderFind = SessionProvider.count;
+                    } else if (modelName === 'users_new') {
+                        dataProviderFind = UserProvider.count;
+                    } else if (modelName === 'users_last_hit') {
+                        dataProviderFind = UserProvider.countByLastHit;
+                    } else if (modelName === 'companies') {
+                        dataProviderFind = UserProvider.countCompaniesByLastHit;
+                    } else if (modelName === 'companies') {
+                        dataProviderFind = UserProvider.countCompaniesByLastHit;
+                    } else if (modelName === 'companies_new') {
+                        dataProviderFind = UserProvider.countNewCompanies;
                     }
 
-                    toFind[modelName] = function(cb) {
-                        return dataProviderFind(QueryHelper.getWhere(where, options), cb);
-                    };
+                    if (dataProviderFind) {
+                        toFind[modelName] = function(cb) {
+                            return dataProviderFind(QueryHelper.getWhere(where, options), cb);
+                        };
+                    }
                 });
 
-                async.parallel(toFind,
-                    function(err, items) {
-                        callback(err, items);
-                    }
-                );
+                async.parallel(toFind, callback);
             },
             findAllByDateGrouped: function(where, options, callback) {
                 var toFind = {};

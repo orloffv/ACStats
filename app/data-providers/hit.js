@@ -45,6 +45,8 @@
                                         user.hits = 1;
                                     }
 
+                                    user.lastHitAt = new Date();
+
                                     toSave.user = function(callback) {
                                         user.save(callback);
                                     };

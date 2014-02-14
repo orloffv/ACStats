@@ -9,7 +9,9 @@
         var User = new Schema({
             name: {type: String, required: true, index: true},
             additional: Schema.Types.Mixed,
+            createdAt: {type: Date, default: Date.now},
             server: {type: Schema.Types.ObjectId, ref: 'Server'},
+            lastHitAt: {type: Date},
             hits: {type: Number},
             sessions: {type: Number},
             events: {type: Number}
@@ -25,6 +27,8 @@
             id: true,
             name: true,
             additional: true,
+            createdAt: true,
+            lastHitAt: true,
             server: {
                 id: true,
                 name: true
