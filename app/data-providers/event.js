@@ -21,8 +21,8 @@
             count: function(where, callback) {
                 EventModel.count(where, callback);
             },
-            countGrouped: function(where, parts, callback) {
-                EventModel.countGrouped(where, parts, callback);
+            countGroupByPartDate: function(where, parts, callback) {
+                EventModel.countGroupByPartDate(where, parts, callback);
             },
             getById: function(id, callback) {
                 EventModel.findById(id).populate('user server').exec(callback);

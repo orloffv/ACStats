@@ -44,8 +44,8 @@
                 }, callback);
         };
 
-        Event.statics.countGrouped = function(where, parts, callback) {
-            QueryHelper.countGrouped(this, where, parts, callback);
+        Event.statics.countGroupByPartDate = function(where, parts, callback) {
+            QueryHelper.countGroupByPartDate(this, where, parts, callback);
         };
 
         var EventModel = mongoose.model('Event', Event);

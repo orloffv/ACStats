@@ -16,11 +16,11 @@
             getById: function(id, callback) {
                 SessionModel.findById(id).populate('user server').exec(callback);
             },
-            countGrouped: function(where, parts, callback) {
-                SessionModel.countGrouped(where, parts, callback);
+            countGroupByPartDate: function(where, parts, callback) {
+                SessionModel.countGroupByPartDate(where, parts, callback);
             },
-            getTimingByDateGrouped: function(where, callback) {
-                SessionModel.getTimingByDateGrouped(where, callback);
+            getTimingGroupByDate: function(where, callback) {
+                SessionModel.getTimingGroupByDate(where, callback);
             },
             count: function(where, callback) {
                 SessionModel.count(where, callback);

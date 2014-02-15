@@ -36,7 +36,7 @@
 
                 return whereExpressions;
             },
-            countGrouped: function(that, where, parts, callback) {
+            countGroupByPartDate: function(that, where, parts, callback) {
                 var secondsEnd, periodSeconds, secondsInPart;
                 if (where.createdAt) {
                     secondsEnd = moment(where.createdAt.$gte).format('X');

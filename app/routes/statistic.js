@@ -9,8 +9,8 @@
         var errorHelper = require('./../libs/error-helper')(log);
 
         var routes = {
-            allByDate: function(req, res) {
-                return StatisticProvider.findAllByDate({server: req.params.id}, {query:req.query}, function(err, statistics) {
+            countAllByDate: function(req, res) {
+                return StatisticProvider.countAllByDate({server: req.params.id}, {query:req.query}, function(err, statistics) {
                     if (!err) {
                         return res.send(screen(statistics, StatisticProvider.screens.models));
                     } else {
@@ -21,8 +21,8 @@
                     }
                 });
             },
-            allByDateGrouped: function(req, res) {
-                return StatisticProvider.findAllByDateGrouped({server: req.params.id}, {query:req.query}, function(err, statistics) {
+            allGroupByPartDate: function(req, res) {
+                return StatisticProvider.findAllGroupByPartDate({server: req.params.id}, {query:req.query}, function(err, statistics) {
                     if (!err) {
                         return res.send(screen(statistics, StatisticProvider.screens.models));
                     } else {
@@ -33,10 +33,10 @@
                     }
                 });
             },
-            sessionTimingByDateGrouped: function(req, res) {
-                return StatisticProvider.findSessionTimingByDateGrouped({server: req.params.id}, {query:req.query}, function(err, statistics) {
+            sessionTimingGroupByDate: function(req, res) {
+                return StatisticProvider.findSessionTimingGroupByDate({server: req.params.id}, {query:req.query}, function(err, statistics) {
                     if (!err) {
-                        return res.send(statistics);
+                        return res.send(mapping(statistics, {date: '_id', timings: 'value'}));
                     } else {
                         res.statusCode = 500;
                         log.error('Internal error(%d): %s', res.statusCode, err.message);
@@ -47,8 +47,9 @@
             }
         };
 
-        app.get('/api/servers/:id/statistic/all/by_date', routes.allByDate);
-        app.get('/api/servers/:id/statistic/all/by_date/grouped', routes.allByDateGrouped);
-        app.get('/api/servers/:id/statistic/session/timing/by_date/grouped', routes.sessionTimingByDateGrouped);
+        app.get('/api/servers/:id/statistic/all/count_by_date', routes.countAllByDate);
+        app.get('/api/servers/:id/statistic/all/group_by_part_date', routes.allGroupByPartDate);
+        app.get('/api/servers/:id/statistic/session/timing/group_by_date', routes.sessionTimingGroupByDate);
+
     };
 })();

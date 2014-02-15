@@ -16,11 +16,11 @@
             server: {type: Schema.Types.ObjectId, ref: 'Server'}
         });
 
-        Session.statics.countGrouped = function(where, parts, callback) {
-            QueryHelper.countGrouped(this, where, parts, callback);
+        Session.statics.countGroupByPartDate = function(where, parts, callback) {
+            QueryHelper.countGroupByPartDate(this, where, parts, callback);
         };
 
-        Session.statics.getTimingByDateGrouped = function(where, callback) {
+        Session.statics.getTimingGroupByDate = function(where, callback) {
             where.timing = {$gt:{}};
             where['timing.loadPage'] = {$gte: 0};
             where['timing.loadSecurity'] = {$gte: 0};

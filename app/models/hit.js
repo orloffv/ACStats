@@ -50,8 +50,8 @@
                 }, callback);
         };
 
-        Hit.statics.countGrouped = function(where, parts, callback) {
-            QueryHelper.countGrouped(this, where, parts, callback);
+        Hit.statics.countGroupByPartDate = function(where, parts, callback) {
+            QueryHelper.countGroupByPartDate(this, where, parts, callback);
         };
 
         var HitModel = mongoose.model('Hit', Hit);

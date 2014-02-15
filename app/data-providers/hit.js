@@ -21,8 +21,8 @@
             count: function(where, callback) {
                 HitModel.count(where, callback);
             },
-            countGrouped: function(where, parts, callback) {
-                HitModel.countGrouped(where, parts, callback);
+            countGroupByPartDate: function(where, parts, callback) {
+                HitModel.countGroupByPartDate(where, parts, callback);
             },
             getById: function(id, callback) {
                 HitModel.findById(id).populate('user server').exec(callback);

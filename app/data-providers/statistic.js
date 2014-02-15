@@ -23,7 +23,7 @@
         };
 
         StatisticProvider.prototype = {
-            findAllByDate: function(where, options, callback) {
+            countAllByDate: function(where, options, callback) {
                 var toFind = {};
 
                 _.each(['sessions', 'events', 'hits', 'users_new', 'users_last_hit', 'companies', 'companies_new'], function(modelName) {
@@ -55,20 +55,20 @@
 
                 async.parallel(toFind, callback);
             },
-            findAllByDateGrouped: function(where, options, callback) {
+            findAllGroupByPartDate: function(where, options, callback) {
+                var parts = options.query.parts || 7;
                 var toFind = {};
 
                 _.each(['hits', 'events', 'sessions'], function(modelName) {
                     var dataProviderFind;
                     if  (modelName === 'events') {
-                        dataProviderFind = EventProvider.countGrouped;
+                        dataProviderFind = EventProvider.countGroupByPartDate;
                     } else if (modelName === 'hits') {
-                        dataProviderFind = HitProvider.countGrouped;
+                        dataProviderFind = HitProvider.countGroupByPartDate;
                     } else if (modelName === 'sessions') {
-                        dataProviderFind = SessionProvider.countGrouped;
+                        dataProviderFind = SessionProvider.countGroupByPartDate;
                     }
 
-                    var parts = 7;
                     toFind[modelName] = function(cb) {
                         return dataProviderFind(QueryHelper.getWhere(where, options), parts, function(err, result) {
                             var returnResult = {};
@@ -94,8 +94,8 @@
 
                 async.parallel(toFind, callback);
             },
-            findSessionTimingByDateGrouped: function(where, options, callback) {
-                SessionProvider.getTimingByDateGrouped(QueryHelper.getWhere(where, options), callback);
+            findSessionTimingGroupByDate: function(where, options, callback) {
+                SessionProvider.getTimingGroupByDate(QueryHelper.getWhere(where, options), callback);
             },
             screens: {
                 models: screenModel
