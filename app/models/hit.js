@@ -50,6 +50,61 @@
                 }, callback);
         };
 
+        Hit.statics.findHitSlowestByDate2 = function(where, callback) {
+            where.timing = {$gt:{}};
+            where['timing.loadHit'] = {$gte: 0};
+
+            return this.mapReduce({
+                map: function() {
+                    var key = this.url;
+                    var values = {loadHit: this.timing.loadHit, count: 1};
+                    emit(key, values);
+                },
+                reduce: function(key, values) {
+                    var timing = {loadHit: 0, count: 0};
+
+                    values.forEach(function(v) {
+                        timing.loadHit += v.loadHit;
+                        timing.count++;
+                    });
+
+                    return timing;
+                },
+                finalize: function(key, reducedVal) {
+                    reducedVal.avg = Math.floor(reducedVal.loadHit/reducedVal.count);
+
+                    return reducedVal;
+                },
+                query: where,
+                out: {
+                    inline:1
+                },
+                verbose: false
+            }, callback);
+        };
+
+        Hit.statics.findHitSlowestByDate = function(where, callback) {
+            where.timing = {$gt:{}};
+            where['timing.loadHit'] = {$gte: 0};
+
+            return this.
+                aggregate(
+                {
+                    $match: where
+                },
+                {
+                    $group: {
+                        _id: '$url',
+                        count: { $sum: 1 },
+                        loadHit: {$sum: "$timing.loadHit"},
+                        avg: {$avg: "$timing.loadHit"}
+                    }
+                },
+                {
+                    $sort: { avg: -1, count: -1 }
+                }, callback);
+        };
+
         Hit.statics.countGroupByPartDate = function(where, parts, callback) {
             QueryHelper.countGroupByPartDate(this, where, parts, callback);
         };

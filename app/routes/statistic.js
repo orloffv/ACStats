@@ -44,12 +44,24 @@
                         return res.send({ error: 'Server error' });
                     }
                 });
+            },
+            hitSlowestByDate: function(req, res) {
+                return StatisticProvider.findHitSlowestByDate({server: req.params.id}, {query:req.query}, function(err, statistics) {
+                    if (!err) {
+                        return res.send(mapping(statistics, {url: '_id'}));
+                    } else {
+                        res.statusCode = 500;
+                        log.error('Internal error(%d): %s', res.statusCode, err.message);
+
+                        return res.send({ error: 'Server error' });
+                    }
+                });
             }
         };
 
         app.get('/api/servers/:id/statistic/all/count_by_date', routes.countAllByDate);
         app.get('/api/servers/:id/statistic/all/group_by_part_date', routes.allGroupByPartDate);
         app.get('/api/servers/:id/statistic/session/timing/group_by_date', routes.sessionTimingGroupByDate);
-
+        app.get('/api/servers/:id/statistic/hits/slowest_by_date', routes.hitSlowestByDate)
     };
 })();

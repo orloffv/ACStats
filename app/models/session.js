@@ -29,7 +29,7 @@
             return this.mapReduce({
                 map: function() {
                     var key = this.createdAt.getFullYear() + '.' + (parseInt(this.createdAt.getMonth(), 10) + 1) + '.' + this.createdAt.getDate();
-                    var values = {loadPage: this.timing.loadPage, loadSecurity: this.timing.loadSecurity, loadJS: this.timing.loadJS};
+                    var values = {loadPage: this.timing.loadPage, loadSecurity: this.timing.loadSecurity, loadJS: this.timing.loadJS, count: 1};
                     emit(key, values);
                 },
                 reduce: function(key, values) {

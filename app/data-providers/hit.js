@@ -24,6 +24,9 @@
             countGroupByPartDate: function(where, parts, callback) {
                 HitModel.countGroupByPartDate(where, parts, callback);
             },
+            findHitSlowestByDate: function(where, callback) {
+                HitModel.findHitSlowestByDate(where, callback);
+            },
             getById: function(id, callback) {
                 HitModel.findById(id).populate('user server').exec(callback);
             },

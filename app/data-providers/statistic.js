@@ -97,6 +97,9 @@
             findSessionTimingGroupByDate: function(where, options, callback) {
                 SessionProvider.getTimingGroupByDate(QueryHelper.getWhere(where, options), callback);
             },
+            findHitSlowestByDate: function(where, options, callback) {
+                HitProvider.findHitSlowestByDate(QueryHelper.getWhere(where, options), callback);
+            },
             screens: {
                 models: screenModel
             }
