@@ -9,8 +9,8 @@
         var errorHelper = require('./../libs/error-helper')(log);
 
         var routes = {
-            countAllByDate: function(req, res) {
-                return StatisticProvider.countAllByDate({server: req.params.id}, {query:req.query}, function(err, statistics) {
+            countUsersCompaniesByDate: function(req, res) {
+                return StatisticProvider.countUsersCompaniesByDate({server: req.params.id}, {query:req.query}, function(err, statistics) {
                     if (!err) {
                         return res.send(screen(statistics, StatisticProvider.screens.models));
                     } else {
@@ -24,7 +24,7 @@
             allGroupByPartDate: function(req, res) {
                 return StatisticProvider.findAllGroupByPartDate({server: req.params.id}, {query:req.query}, function(err, statistics) {
                     if (!err) {
-                        return res.send(screen(statistics, StatisticProvider.screens.models));
+                        return res.send(statistics);
                     } else {
                         res.statusCode = 500;
                         log.error('Internal error(%d): %s', res.statusCode, err.message);
@@ -59,9 +59,15 @@
             }
         };
 
-        app.get('/api/servers/:id/statistic/all/count_by_date', routes.countAllByDate);
+        app.get('/api/servers/:id/statistic/users_companies/count_by_date', routes.countUsersCompaniesByDate);
         app.get('/api/servers/:id/statistic/all/group_by_part_date', routes.allGroupByPartDate);
         app.get('/api/servers/:id/statistic/session/timing/group_by_date', routes.sessionTimingGroupByDate);
-        app.get('/api/servers/:id/statistic/hits/slowest_by_date', routes.hitSlowestByDate)
+        app.get('/api/servers/:id/statistic/hits/slowest_by_date', routes.hitSlowestByDate);
+
+        //самые популярные события
+        //самые активные компании
+        //самые активные пользователи
+        //добавить лимиты
+        //время загрузки сессий
     };
 })();

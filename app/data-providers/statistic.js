@@ -13,9 +13,6 @@
         var StatisticProvider = function () {};
 
         var screenModel = {
-            sessions: true,
-            events: true,
-            hits: true,
             users_new: true,
             users_last_hit: true,
             companies: true,
@@ -23,18 +20,12 @@
         };
 
         StatisticProvider.prototype = {
-            countAllByDate: function(where, options, callback) {
+            countUsersCompaniesByDate: function(where, options, callback) {
                 var toFind = {};
 
-                _.each(['sessions', 'events', 'hits', 'users_new', 'users_last_hit', 'companies', 'companies_new'], function(modelName) {
+                _.each(['users_new', 'users_last_hit', 'companies', 'companies_new'], function(modelName) {
                     var dataProviderFind;
-                    if  (modelName === 'events') {
-                        dataProviderFind = EventProvider.count;
-                    } else if (modelName === 'hits') {
-                        dataProviderFind = HitProvider.count;
-                    } else if (modelName === 'sessions') {
-                        dataProviderFind = SessionProvider.count;
-                    } else if (modelName === 'users_new') {
+                    if (modelName === 'users_new') {
                         dataProviderFind = UserProvider.count;
                     } else if (modelName === 'users_last_hit') {
                         dataProviderFind = UserProvider.countByLastHit;
@@ -72,9 +63,8 @@
                     toFind[modelName] = function(cb) {
                         return dataProviderFind(QueryHelper.getWhere(where, options), parts, function(err, result) {
                             var returnResult = {};
-
                             if (!err) {
-                                _.map(result, function(item) {
+                                _.each(result, function(item) {
                                     returnResult[item._id] = item.value;
                                 });
 

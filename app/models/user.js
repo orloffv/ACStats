@@ -2,6 +2,7 @@
     "use strict";
 
     var findOrCreate = require('mongoose-findorcreate');
+    var moment = require('moment');
 
     module.exports = function(mongoose) {
         var Schema   = mongoose.Schema;
@@ -16,6 +17,42 @@
             sessions: {type: Number},
             events: {type: Number}
         });
+
+        User.statics.countNewCompanies = function(where, callback) {
+            where.additional = {$gt:{}};
+            where['additional.companyId'] = {$gte: ""};
+
+            var unixFrom = moment(where.createdAt.$gte).valueOf();
+
+            return this.mapReduce({
+                map: function() {
+                    var key = this.additional.companyId;
+                    var value = {createdAts: [this.createdAt]};
+                    emit(key, value);
+                },
+                reduce: function(key, values) {
+                    var result = {createdAts: []};
+                    values.forEach(function(v) {
+                        if (unixFrom < Date.parse(v.createdAts[0])) {
+                            result.createdAts.push(v.createdAts[0]);
+                        }
+                    });
+
+                    return result;
+                },
+                finalize: function(key, reducedVal) {
+                    return Boolean(reducedVal.createdAts.length);
+                },
+                query: where,
+                out: {
+                    inline:1
+                },
+                scope: {
+                    unixFrom: unixFrom
+                },
+                verbose: false
+            }, callback);
+        };
 
         User.plugin(findOrCreate);
 

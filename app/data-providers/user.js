@@ -47,15 +47,11 @@
                 });
             },
             countNewCompanies: function(where, callback) {
-                where.additional = {$gt:{}};
-                where['additional.companyId'] = {$gte: ""};
-
-                UserModel.distinct('additional.companyId', where, function(err, result) {
+                UserModel.countNewCompanies(where, function(err, result) {
                     var count = 0;
                     if (!err) {
-                        count = result.length;
+                        count = _.size(result);
                     }
-
                     callback(err, count);
                 });
             },
