@@ -90,6 +90,9 @@
             findHitSlowestByDate: function(where, options, callback) {
                 HitProvider.findHitSlowestByDate(QueryHelper.getWhere(where, options), callback);
             },
+            findEventNewestByDate: function(where, options, callback) {
+                EventProvider.findEventNewestByDate(QueryHelper.getWhere(where, options), callback);
+            },
             screens: {
                 models: screenModel
             }

@@ -19,29 +19,46 @@
         });
 
         User.statics.countNewCompanies = function(where, callback) {
+            var createdAt = where.createdAt;
             where.additional = {$gt:{}};
-            where['additional.companyId'] = {$gte: ""};
+            where.createdAt = {$exists: true};
+            where['additional.companyId'] = {$exists: true};
 
-            var unixFrom = moment(where.createdAt.$gte).valueOf();
+            var unixFrom = moment(createdAt.$gte).valueOf();
 
             return this.mapReduce({
                 map: function() {
                     var key = this.additional.companyId;
-                    var value = {createdAts: [this.createdAt]};
+                    var value = {createdAtTrue: [], createdAtFalse: []};
+
+                    if (unixFrom > Date.parse(this.createdAt)) {
+                        value.createdAtFalse.push(this.createdAt);
+                    } else {
+                        value.createdAtTrue.push(this.createdAt);
+                    }
+
                     emit(key, value);
                 },
                 reduce: function(key, values) {
-                    var result = {createdAts: []};
+                    var result = {createdAtFalse: [], createdAtTrue: []};
                     values.forEach(function(v) {
-                        if (unixFrom < Date.parse(v.createdAts[0])) {
-                            result.createdAts.push(v.createdAts[0]);
+                        if (v.createdAtFalse.length) {
+                            result.createdAtFalse.push(v.createdAtFalse[0]);
+                        }
+
+                        if (v.createdAtTrue.length) {
+                            result.createdAtTrue.push(v.createdAtTrue[0]);
+                        }
+
+                        if (v.createdAtTrue.length && result.createdAtFalse.length) {
+                            return result;
                         }
                     });
 
                     return result;
                 },
                 finalize: function(key, reducedVal) {
-                    return Boolean(reducedVal.createdAts.length);
+                    return Boolean(reducedVal.createdAtTrue.length && ! reducedVal.createdAtFalse.length);
                 },
                 query: where,
                 out: {

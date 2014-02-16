@@ -50,7 +50,12 @@
                 UserModel.countNewCompanies(where, function(err, result) {
                     var count = 0;
                     if (!err) {
-                        count = _.size(result);
+                        count = _.chain(result).
+                            filter(function(item) {
+                                return item.value;
+                            }).
+                            size().
+                            value();
                     }
                     callback(err, count);
                 });

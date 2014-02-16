@@ -48,6 +48,57 @@
             QueryHelper.countGroupByPartDate(this, where, parts, callback);
         };
 
+        Event.statics.findEventNewestByDate = function(where, callback) {
+            var createdAt = where.createdAt;
+            where.createdAt = {$exists: true}
+
+            var unixFrom = moment(createdAt.$gte).valueOf();
+
+            return this.mapReduce({
+                map: function() {
+                    var key = this.name;
+                    var value = {createdAtTrue: [], createdAtFalse: []};
+
+                    if (unixFrom > Date.parse(this.createdAt)) {
+                        value.createdAtFalse.push(this.createdAt);
+                    } else {
+                        value.createdAtTrue.push(this.createdAt);
+                    }
+
+                    emit(key, value);
+                },
+                reduce: function(key, values) {
+                    var result = {createdAtFalse: [], createdAtTrue: []};
+                    values.forEach(function(v) {
+                        if (v.createdAtFalse.length) {
+                            result.createdAtFalse.push(v.createdAtFalse[0]);
+                        }
+
+                        if (v.createdAtTrue.length) {
+                            result.createdAtTrue.push(v.createdAtTrue[0]);
+                        }
+
+                        if (v.createdAtTrue.length && result.createdAtFalse.length) {
+                            return result;
+                        }
+                    });
+
+                    return result;
+                },
+                finalize: function(key, reducedVal) {
+                    return Boolean(reducedVal.createdAtTrue.length && ! reducedVal.createdAtFalse.length);
+                },
+                query: where,
+                out: {
+                    inline:1
+                },
+                scope: {
+                    unixFrom: unixFrom
+                },
+                verbose: false
+            }, callback);
+        };
+
         var EventModel = mongoose.model('Event', Event);
 
         var screenModel = {

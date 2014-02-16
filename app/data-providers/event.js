@@ -24,6 +24,20 @@
             countGroupByPartDate: function(where, parts, callback) {
                 EventModel.countGroupByPartDate(where, parts, callback);
             },
+            findEventNewestByDate: function(where, callback) {
+                EventModel.findEventNewestByDate(where, function(err, result) {
+                    var count = 0;
+                    if (!err) {
+                        count = _.chain(result).
+                            filter(function(item) {
+                                return item.value;
+                            }).
+                            size().
+                            value();
+                    }
+                    callback(err, count);
+                });
+            },
             getById: function(id, callback) {
                 EventModel.findById(id).populate('user server').exec(callback);
             },
