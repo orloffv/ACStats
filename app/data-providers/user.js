@@ -4,6 +4,7 @@
         var _          = require('underscore');
         var async      = require('async');
         var UserModel = mongoose.model('User');
+        var HitModel = mongoose.model('Hit');
 
         var UserProvider = function () {};
 
@@ -80,6 +81,30 @@
                             value();
                     }
                     callback(err, count);
+                });
+            },
+            findUsersActiveByHitsDate: function(where, limit, callback) {
+                HitModel.findActiveUsers(where, limit, function(err, hitResult) {
+                    if (!err) {
+                        UserModel.find({_id: {$in: _.pluck(hitResult, '_id')}}, function(err, userResult) {
+                            var result = [];
+                            if (!err) {
+                                result = _.map(userResult, function(item) {
+                                    var currentHits = _.find(hitResult, function(hit) {
+                                        return _.isEqual(hit._id, item._id);
+                                    });
+                                    item = item.toObject();
+                                    item.currentHits = currentHits.count;
+
+                                    return item;
+                                });
+                            }
+
+                            callback(err, result);
+                        });
+                    } else {
+                        callback(err, hitResult);
+                    }
                 });
             },
             screens: UserModel.screens

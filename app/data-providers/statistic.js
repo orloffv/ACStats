@@ -137,6 +137,9 @@
             findEventPopularByDate: function(where, options, callback) {
                 EventProvider.findEventPopularByDate(QueryHelper.getWhere(where, options), QueryHelper.getLimit(options), callback);
             },
+            findUsersActiveByHitsDate: function(where, options, callback) {
+                UserProvider.findUsersActiveByHitsDate(QueryHelper.getWhere(where, options), QueryHelper.getLimit(options), callback);
+            },
             screens: {
                 models: screenModel
             }

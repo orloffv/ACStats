@@ -22,6 +22,25 @@
             return this.createdAt.getTime();
         });
 
+        Hit.statics.findActiveUsers = function(where, limit, callback) {
+            return this.aggregate(
+                {
+                    $match: where
+                },
+                {
+                    $group: {
+                        _id: '$user',
+                        count: { $sum: 1 }
+                    }
+                },
+                {
+                    $sort: { count: -1 }
+                },
+                limit,
+                callback
+            );
+        };
+
         Hit.statics.findAllWithGroupByUrl = function(where, callback) {
             return this.aggregate(
                 {

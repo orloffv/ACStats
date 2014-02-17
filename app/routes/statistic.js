@@ -80,6 +80,18 @@
                         return res.send({ error: 'Server error' });
                     }
                 });
+            },
+            usersActiveByHitsDate: function(req, res) {
+                return StatisticProvider.findUsersActiveByHitsDate({server: req.params.id}, {query:req.query}, function(err, statistics) {
+                    if (!err) {
+                        return res.send(statistics);
+                    } else {
+                        res.statusCode = 500;
+                        log.error('Internal error(%d): %s', res.statusCode, err.message);
+
+                        return res.send({ error: 'Server error' });
+                    }
+                });
             }
         };
 
@@ -89,9 +101,8 @@
         app.get('/api/servers/:id/statistic/hit/slowest_by_date', routes.hitSlowestByDate);
         app.get('/api/servers/:id/statistic/event/popular_by_date', routes.eventPopularByDate);
         app.get('/api/servers/:id/statistic/users_companies/count_active_in_all_by_date', routes.countActiveInAllUsersCompaniesByDate);
+        app.get('/api/servers/:id/statistic/users/group_by_hits_date', routes.usersActiveByHitsDate);
 
         //самые активные компании
-        //самые активные пользователи
-        //время загрузки сессий
     };
 })();
