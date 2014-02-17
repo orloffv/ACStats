@@ -20,7 +20,14 @@
             QueryHelper.countGroupByPartDate(this, where, parts, callback);
         };
 
-        Session.statics.getTimingGroupByDate = function(where, callback) {
+        Session.statics.getTimingGroupByPartDate = function(where, parts, callback) {
+            var secondsEnd, periodSeconds, secondsInPart;
+            if (where.createdAt) {
+                secondsEnd = moment(where.createdAt.$gte).format('X');
+                periodSeconds = moment(where.createdAt.$lt).format('X') - secondsEnd;
+                secondsInPart = Math.floor(periodSeconds / parts);
+            }
+
             where.timing = {$exists: true};
             where['timing.loadPage'] = {$gte: 0};
             where['timing.loadSecurity'] = {$gte: 0};
@@ -28,9 +35,10 @@
 
             return this.mapReduce({
                 map: function() {
-                    var key = this.createdAt.getFullYear() + '.' + (parseInt(this.createdAt.getMonth(), 10) + 1) + '.' + this.createdAt.getDate();
+                    //((secondsEnd - currentSeconds) / secondsInPart)
+                    var part = Math.abs(Math.floor((secondsEnd - (Date.parse(this.createdAt) / 1000)) / secondsInPart));
                     var values = {loadPage: this.timing.loadPage, loadSecurity: this.timing.loadSecurity, loadJS: this.timing.loadJS, count: 1};
-                    emit(key, values);
+                    emit(part, values);
                 },
                 reduce: function(key, values) {
                     var timing = {loadPage: 0, loadSecurity: 0, loadJS: 0, count: 0};
@@ -48,7 +56,11 @@
                 out: {
                     inline:1
                 },
-                verbose: false
+                verbose: false,
+                scope: {
+                    secondsEnd: secondsEnd,
+                    secondsInPart: secondsInPart
+                }
             }, callback);
         };
 

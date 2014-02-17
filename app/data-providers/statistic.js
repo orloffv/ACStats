@@ -110,8 +110,26 @@
 
                 async.parallel(toFind, callback);
             },
-            findSessionTimingGroupByDate: function(where, options, callback) {
-                SessionProvider.getTimingGroupByDate(QueryHelper.getWhere(where, options), callback);
+            findSessionTimingGroupByPartDate: function(where, options, callback) {
+                var parts = options.query.parts || 7;
+                SessionProvider.getTimingGroupByPartDate(QueryHelper.getWhere(where, options), parts, function(err, result) {
+                    var returnResult = {};
+                    if (!err) {
+                        _.each(result, function(item) {
+                            returnResult[item._id] = item.value;
+                        });
+
+                        _(parts).times(function(key) {
+                            if (!returnResult[key + 1]) {
+                                returnResult[key + 1] = null;
+                            }
+                        });
+                    } else {
+                        returnResult = result;
+                    }
+
+                    callback(err, returnResult);
+                });
             },
             findHitSlowestByDate: function(where, options, callback) {
                 HitProvider.findHitSlowestByDate(QueryHelper.getWhere(where, options), QueryHelper.getLimit(options), callback);

@@ -19,8 +19,8 @@
             countGroupByPartDate: function(where, parts, callback) {
                 SessionModel.countGroupByPartDate(where, parts, callback);
             },
-            getTimingGroupByDate: function(where, callback) {
-                SessionModel.getTimingGroupByDate(where, callback);
+            getTimingGroupByPartDate: function(where, parts, callback) {
+                SessionModel.getTimingGroupByPartDate(where, parts, callback);
             },
             count: function(where, callback) {
                 SessionModel.count(where, callback);
