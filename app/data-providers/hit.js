@@ -8,6 +8,7 @@
         var HitSchema = require('./schemas/hit.json');
         var ServerProvider = require('./server')(mongoose, log);
         var UserProvider = require('./user')(mongoose, log);
+        var QueryHelper = require('./../libs/query-helper')(mongoose);
 
         var HitProvider = function () {};
 
@@ -16,7 +17,7 @@
                 HitModel.find(where).populate('user server').exec(callback);
             },
             findAllWithGroupByUrl: function(where, callback) {
-                HitModel.findAllWithGroupByUrl(where, callback);
+                HitModel.findAllWithGroupByUrl(QueryHelper.getWhere(where), callback);
             },
             count: function(where, callback) {
                 HitModel.count(where, callback);

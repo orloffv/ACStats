@@ -8,6 +8,7 @@
         var ServerProvider = require('./server')(mongoose, log);
         var UserProvider = require('./user')(mongoose, log);
         var EventSchema = require('./schemas/event.json');
+        var QueryHelper = require('./../libs/query-helper')(mongoose);
 
         var EventProvider = function () {};
 
@@ -16,7 +17,7 @@
                 EventModel.find(where).populate('user server').exec(callback);
             },
             findAllWithGroupByName: function(where, callback) {
-                EventModel.findAllWithGroupByName(where, callback);
+                EventModel.findAllWithGroupByName(QueryHelper.getWhere(where), callback);
             },
             count: function(where, callback) {
                 EventModel.count(where, callback);

@@ -20,7 +20,6 @@
 
         User.statics.countNewCompanies = function(where, callback) {
             var createdAt = where.createdAt;
-            where.additional = {$gt:{}};
             where.createdAt = {$exists: true};
             where['additional.companyId'] = {$exists: true};
 

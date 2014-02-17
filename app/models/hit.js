@@ -23,12 +23,6 @@
         });
 
         Hit.statics.findAllWithGroupByUrl = function(where, callback) {
-            _.each(where, function(value, key) {
-                if (key === 'user' || key === 'server') {
-                    where[key] = mongoose.Types.ObjectId(value);
-                }
-            });
-
             return this.aggregate(
                 {
                     $match: where

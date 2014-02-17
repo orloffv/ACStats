@@ -32,8 +32,7 @@
                     delete where.createdAt;
                 }
 
-                where.additional = {$gt:{}};
-                where['additional.companyId'] = {$gte: ""};
+                where['additional.companyId'] = {$exists: true};
 
                 UserModel.distinct('additional.companyId', where, function(err, result) {
                     var count = 0;
@@ -58,8 +57,7 @@
                     delete where.createdAt;
                 }
 
-                where.additional = {$gt:{}};
-                where['additional.companyId'] = {$gte: ""};
+                where['additional.companyId'] = {$exists: true};
 
                 UserModel.distinct('additional.companyId', where, function(err, result) {
                     var count = 0;
