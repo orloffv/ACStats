@@ -16,10 +16,36 @@
             users_new: true,
             users_last_hit: true,
             companies: true,
-            companies_new: true
+            companies_new: true,
+            companies_last_hit: true,
+            users: true
         };
 
         StatisticProvider.prototype = {
+            countActiveInAllUsersCompaniesByDate: function(where, options, callback) {
+                var toFind = {};
+
+                _.each(['users', 'users_last_hit', 'companies', 'companies_last_hit'], function(modelName) {
+                    var dataProviderFind;
+                    if (modelName === 'users') {
+                        dataProviderFind = UserProvider.countAll;
+                    } else if (modelName === 'users_last_hit') {
+                        dataProviderFind = UserProvider.countByLastHit;
+                    } else if (modelName === 'companies') {
+                        dataProviderFind = UserProvider.countAllCompanies;
+                    } else if (modelName === 'companies_last_hit') {
+                        dataProviderFind = UserProvider.countCompaniesByLastHit;
+                    }
+
+                    if (dataProviderFind) {
+                        toFind[modelName] = function(cb) {
+                            return dataProviderFind(QueryHelper.getWhere(where, options), cb);
+                        };
+                    }
+                });
+
+                async.parallel(toFind, callback);
+            },
             countUsersCompaniesByDate: function(where, options, callback) {
                 var toFind = {};
 

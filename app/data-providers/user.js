@@ -20,6 +20,30 @@
             count: function(where, callback) {
                 UserModel.count(where, callback);
             },
+            countAll: function(where, callback) {
+                if (where.createdAt) {
+                    delete where.createdAt;
+                }
+
+                UserModel.count(where, callback);
+            },
+            countAllCompanies: function(where, callback) {
+                if (where.createdAt) {
+                    delete where.createdAt;
+                }
+
+                where.additional = {$gt:{}};
+                where['additional.companyId'] = {$gte: ""};
+
+                UserModel.distinct('additional.companyId', where, function(err, result) {
+                    var count = 0;
+                    if (!err) {
+                        count = result.length;
+                    }
+
+                    callback(err, count);
+                });
+            },
             countByLastHit: function(where, callback) {
                 if (where.createdAt) {
                     where.lastHitAt = where.createdAt;
