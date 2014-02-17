@@ -88,10 +88,10 @@
                 SessionProvider.getTimingGroupByDate(QueryHelper.getWhere(where, options), callback);
             },
             findHitSlowestByDate: function(where, options, callback) {
-                HitProvider.findHitSlowestByDate(QueryHelper.getWhere(where, options), callback);
+                HitProvider.findHitSlowestByDate(QueryHelper.getWhere(where, options), QueryHelper.getLimit(options), callback);
             },
-            findEventNewestByDate: function(where, options, callback) {
-                EventProvider.findEventNewestByDate(QueryHelper.getWhere(where, options), callback);
+            findEventPopularByDate: function(where, options, callback) {
+                EventProvider.findEventPopularByDate(QueryHelper.getWhere(where, options), QueryHelper.getLimit(options), callback);
             },
             screens: {
                 models: screenModel

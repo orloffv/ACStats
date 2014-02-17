@@ -21,7 +21,7 @@
         };
 
         Session.statics.getTimingGroupByDate = function(where, callback) {
-            where.timing = {$gt:{}};
+            where.timing = {$exists: true};
             where['timing.loadPage'] = {$gte: 0};
             where['timing.loadSecurity'] = {$gte: 0};
             where['timing.loadJS'] = {$gte: 0};

@@ -29,8 +29,7 @@
                 }
             });
 
-            return this.
-                aggregate(
+            return this.aggregate(
                 {
                     $match: where
                 },
@@ -47,48 +46,16 @@
                 },
                 {
                     $sort: { count: -1 }
-                }, callback);
+                },
+                callback
+            );
         };
 
-        Hit.statics.findHitSlowestByDate2 = function(where, callback) {
-            where.timing = {$gt:{}};
+        Hit.statics.findHitSlowestByDate = function(where, limit, callback) {
+            where.timing = {$exists: true};
             where['timing.loadHit'] = {$gte: 0};
 
-            return this.mapReduce({
-                map: function() {
-                    var key = this.url;
-                    var values = {loadHit: this.timing.loadHit, count: 1};
-                    emit(key, values);
-                },
-                reduce: function(key, values) {
-                    var timing = {loadHit: 0, count: 0};
-
-                    values.forEach(function(v) {
-                        timing.loadHit += v.loadHit;
-                        timing.count++;
-                    });
-
-                    return timing;
-                },
-                finalize: function(key, reducedVal) {
-                    reducedVal.avg = Math.floor(reducedVal.loadHit/reducedVal.count);
-
-                    return reducedVal;
-                },
-                query: where,
-                out: {
-                    inline:1
-                },
-                verbose: false
-            }, callback);
-        };
-
-        Hit.statics.findHitSlowestByDate = function(where, callback) {
-            where.timing = {$gt:{}};
-            where['timing.loadHit'] = {$gte: 0};
-
-            return this.
-                aggregate(
+            return this.aggregate(
                 {
                     $match: where
                 },
@@ -102,7 +69,10 @@
                 },
                 {
                     $sort: { avg: -1, count: -1 }
-                }, callback);
+                },
+                limit,
+                callback
+            );
         };
 
         Hit.statics.countGroupByPartDate = function(where, parts, callback) {

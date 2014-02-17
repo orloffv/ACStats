@@ -36,6 +36,17 @@
 
                 return whereExpressions;
             },
+            getLimit: function(options) {
+                var limitExpressions = {$limit: 50};
+
+                if (options.query) {
+                    if (options.query.limit) {
+                        limitExpressions.$limit = parseInt(options.query.limit);
+                    }
+                }
+
+                return limitExpressions;
+            },
             countGroupByPartDate: function(that, where, parts, callback) {
                 var secondsEnd, periodSeconds, secondsInPart;
                 if (where.createdAt) {

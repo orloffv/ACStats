@@ -23,8 +23,7 @@
                 }
             });
 
-            return this.
-                aggregate(
+            return this.aggregate(
                 {
                     $match: where
                 },
@@ -41,62 +40,32 @@
                 },
                 {
                     $sort: { count: -1 }
-                }, callback);
+                },
+                callback
+            );
         };
 
         Event.statics.countGroupByPartDate = function(where, parts, callback) {
             QueryHelper.countGroupByPartDate(this, where, parts, callback);
         };
 
-        Event.statics.findEventNewestByDate = function(where, callback) {
-            var createdAt = where.createdAt;
-            where.createdAt = {$exists: true}
-
-            var unixFrom = moment(createdAt.$gte).valueOf();
-
-            return this.mapReduce({
-                map: function() {
-                    var key = this.name;
-                    var value = {createdAtTrue: [], createdAtFalse: []};
-
-                    if (unixFrom > Date.parse(this.createdAt)) {
-                        value.createdAtFalse.push(this.createdAt);
-                    } else {
-                        value.createdAtTrue.push(this.createdAt);
+        Event.statics.findEventPopularByDate = function(where, limit, callback) {
+            return this.aggregate(
+                {
+                    $match: where
+                },
+                {
+                    $group: {
+                        _id: '$name',
+                        count: { $sum: 1 }
                     }
-
-                    emit(key, value);
                 },
-                reduce: function(key, values) {
-                    var result = {createdAtFalse: [], createdAtTrue: []};
-                    values.forEach(function(v) {
-                        if (v.createdAtFalse.length) {
-                            result.createdAtFalse.push(v.createdAtFalse[0]);
-                        }
-
-                        if (v.createdAtTrue.length) {
-                            result.createdAtTrue.push(v.createdAtTrue[0]);
-                        }
-
-                        if (v.createdAtTrue.length && result.createdAtFalse.length) {
-                            return result;
-                        }
-                    });
-
-                    return result;
+                {
+                    $sort: { count: -1 }
                 },
-                finalize: function(key, reducedVal) {
-                    return Boolean(reducedVal.createdAtTrue.length && ! reducedVal.createdAtFalse.length);
-                },
-                query: where,
-                out: {
-                    inline:1
-                },
-                scope: {
-                    unixFrom: unixFrom
-                },
-                verbose: false
-            }, callback);
+                limit,
+                callback
+            );
         };
 
         var EventModel = mongoose.model('Event', Event);
