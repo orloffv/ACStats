@@ -41,7 +41,7 @@
 
                 if (options.query) {
                     if (options.query.limit) {
-                        limitExpressions.$limit = parseInt(options.query.limit);
+                        limitExpressions.$limit = parseInt(options.query.limit, 10);
                     }
                 }
 
