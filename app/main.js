@@ -26,13 +26,21 @@
 
         app.configure('testing', function(){
         });
-
+        /*
+        app.use(function(req, res, next) {
+            setTimeout(function() {
+                res.status(500);
+                return res.send({ error: 'Server error' });
+            }, 1000 * 20);
+        });
+        */
         // all environments
         app.set('log', log);
         app.use(express.json());
         app.use(express.urlencoded());
         app.use(express.methodOverride());
         app.use(allowCrossDomain);
+
         app.use(app.router);
 
         app.use(function(req, res, next) {
@@ -76,10 +84,14 @@
                         function(cb) {
                             if (app.get('httpInstance')) {
                                 app.get('log').debug('HTTP server: closing');
-                                app.get('httpInstance').close(function(cbc) {
-                                    app.get('log').debug('HTTP server: closed');
-                                    cb(cbc);
-                                });
+                                try {
+                                    app.get('httpInstance').close(function(cbc) {
+                                        app.get('log').debug('HTTP server: closed');
+                                        cb(cbc);
+                                    });
+                                } catch(e) {
+                                    cb();
+                                }
                             } else {
                                 cb();
                             }
@@ -87,10 +99,14 @@
                         function(cb) {
                             if (app.get('httpsInstance')) {
                                 app.get('log').debug('HTTPS server: closing');
-                                app.get('httpsInstance').close(function(cbc) {
-                                    app.get('log').debug('HTTPS server: closed');
-                                    cb(cbc);
-                                });
+                                try {
+                                    app.get('httpsInstance').close(function(cbc) {
+                                        app.get('log').debug('HTTPS server: closed');
+                                        cb(cbc);
+                                    });
+                                } catch(e) {
+                                    cb();
+                                }
                             } else {
                                 cb();
                             }
@@ -116,6 +132,12 @@
         //process.on('exit', function() {
         //    app.get('closeApplication')(app);
         //});
+
+        process.on('message', function(msg) {
+            if (msg === 'shutdown') {
+                //app.get('closeApplication')(app);
+            }
+        });
 
         process.on('SIGINT', function() {
             app.get('closeApplication')(app);
