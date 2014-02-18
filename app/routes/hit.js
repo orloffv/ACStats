@@ -80,6 +80,7 @@
         app.get('/api/servers/:id/hits', routes.listByServer);
         app.get('/api/sessions/:id/hits', routes.listBySession);
         app.get('/api/users/:id/hits/grouped', routes.listByUserGrouped);
+        app.get('/api/servers/:serverId/users/:id/hits/grouped', routes.listByUserGrouped);
         app.get('/api/servers/:id/hits/grouped', routes.listByServerGrouped);
     };
 })();

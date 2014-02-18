@@ -52,7 +52,7 @@
                     }
                 });
             },
-            listWithFilerGrouped: function(where, req, res) {
+            listWithFilterGrouped: function(where, req, res) {
                 return EventProvider.findAllWithGroupByName(where, function(err, events) {
                     if (!err) {
                         return res.send(screen(events, EventProvider.screens.groupedCollection));
@@ -62,10 +62,10 @@
                 });
             },
             listByUserGrouped: function(req, res) {
-                return routes.listWithFilerGrouped({user: req.params.id}, req, res);
+                return routes.listWithFilterGrouped({user: req.params.id}, req, res);
             },
             listByServerGrouped: function(req, res) {
-                return routes.listWithFilerGrouped({server: req.params.id}, req, res);
+                return routes.listWithFilterGrouped({server: req.params.id}, req, res);
             }
         };
 
@@ -75,6 +75,7 @@
         app.get('/api/servers/:id/events', routes.listByServer);
         app.get('/api/users/:id/events', routes.listByUser);
         app.get('/api/users/:id/events/grouped', routes.listByUserGrouped);
+        app.get('/api/servers/:serverId/users/:id/events/grouped', routes.listByUserGrouped);
         app.get('/api/servers/:id/events/grouped', routes.listByServerGrouped);
     };
 })();

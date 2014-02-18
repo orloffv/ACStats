@@ -28,7 +28,6 @@
                         name: { $first: "$name" },
                         firstAt: {$first: "$createdAt"},
                         lastAt: {$last: "$createdAt"},
-                        ids: { $addToSet: "$_id" },
                         users: { $addToSet: "$user" }
                     }
                 },

@@ -51,6 +51,7 @@
 
         app.get('/api/users', routes.list);
         app.get('/api/users/:id', routes.get);
+        app.get('/api/servers/:serverId/users/:id', routes.get);
         app.get('/api/servers/:id/users', routes.listByServer);
         app.get('/api/servers/:id/companies', routes.listCompaniesByServer);
         app.get('/api/servers/:id/companies/:companyId/users', routes.listByCompany);
