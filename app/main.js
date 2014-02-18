@@ -4,6 +4,7 @@
         var express = require('express');
         var config = require('./libs/config')(environment);
         var log = require('./libs/log')(module, config);
+        var async = require('async');
 
         mongoose = require('./libs/mongoose')(mongoose, log, config);
 
@@ -67,18 +68,69 @@
         app.set('mongoose', mongoose);
         app.set('config', config);
 
-        process.on('exit', function() {
-            app.get('mongoose').disconnectServer();
+        app.set('closeApplication', function(app) {
+            app.get('log').debug('Application: closing');
+            var closeServers = function(callback) {
+                async.parallel(
+                    [
+                        function(cb) {
+                            if (app.get('httpInstance')) {
+                                app.get('log').debug('HTTP server: closing');
+                                app.get('httpInstance').close(function(cbc) {
+                                    app.get('log').debug('HTTP server: closed');
+                                    cb(cbc);
+                                });
+                            } else {
+                                cb();
+                            }
+                        },
+                        function(cb) {
+                            if (app.get('httpsInstance')) {
+                                app.get('log').debug('HTTPS server: closing');
+                                app.get('httpsInstance').close(function(cbc) {
+                                    app.get('log').debug('HTTPS server: closed');
+                                    cb(cbc);
+                                });
+                            } else {
+                                cb();
+                            }
+                        },
+                        function(cb) {
+                            app.get('mongoose').disconnectServer(cb);
+                        }
+                    ],
+                    callback
+                );
+            };
+
+            closeServers(function() {
+                process.exit(0);
+            });
+
+            setTimeout(function() {
+                app.get('log').debug('Could not close connections in time, forcefully shutting down');
+                process.exit(1);
+            }, 5*1000);
+        });
+
+        //process.on('exit', function() {
+        //    app.get('closeApplication')(app);
+        //});
+
+        process.on('SIGINT', function() {
+            app.get('closeApplication')(app);
+        });
+
+        process.on('SIGTERM', function() {
+            app.get('closeApplication')(app);
+        });
+
+        process.on('SIGTSTP', function() {
+            app.get('closeApplication')(app);
         });
 
         process.on('uncaughtException', function(err) {
             app.get('log').error('Internal error: %s', err.message, err);
-        });
-
-        process.on('SIGINT', function() {
-            app.get('mongoose').disconnectServer(function() {
-                process.exit(0);
-            });
         });
 
         return app;

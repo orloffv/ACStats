@@ -14,10 +14,7 @@
                     if (!err) {
                         return res.send(screen(statistics, StatisticProvider.screens.models));
                     } else {
-                        res.statusCode = 500;
-                        log.error('Internal error(%d): %s', res.statusCode, err.message);
-
-                        return res.send({ error: 'Server error' });
+                        return errorHelper(err, res);
                     }
                 });
             },
@@ -26,10 +23,7 @@
                     if (!err) {
                         return res.send(statistics);
                     } else {
-                        res.statusCode = 500;
-                        log.error('Internal error(%d): %s', res.statusCode, err.message);
-
-                        return res.send({ error: 'Server error' });
+                        return errorHelper(err, res);
                     }
                 });
             },
@@ -38,10 +32,7 @@
                     if (!err) {
                         return res.send(statistics);
                     } else {
-                        res.statusCode = 500;
-                        log.error('Internal error(%d): %s', res.statusCode, err.message);
-
-                        return res.send({ error: 'Server error' });
+                        return errorHelper(err, res);
                     }
                 });
             },
@@ -50,10 +41,7 @@
                     if (!err) {
                         return res.send(mapping(statistics, {url: '_id'}));
                     } else {
-                        res.statusCode = 500;
-                        log.error('Internal error(%d): %s', res.statusCode, err.message);
-
-                        return res.send({ error: 'Server error' });
+                        return errorHelper(err, res);
                     }
                 });
             },
@@ -62,10 +50,7 @@
                     if (!err) {
                         return res.send(mapping(statistics, {name: '_id'}));
                     } else {
-                        res.statusCode = 500;
-                        log.error('Internal error(%d): %s', res.statusCode, err.message);
-
-                        return res.send({ error: 'Server error' });
+                        return errorHelper(err, res);
                     }
                 });
             },
@@ -74,10 +59,7 @@
                     if (!err) {
                         return res.send(screen(statistics, StatisticProvider.screens.models));
                     } else {
-                        res.statusCode = 500;
-                        log.error('Internal error(%d): %s', res.statusCode, err.message);
-
-                        return res.send({ error: 'Server error' });
+                        return errorHelper(err, res);
                     }
                 });
             },
@@ -86,10 +68,7 @@
                     if (!err) {
                         return res.send(statistics);
                     } else {
-                        res.statusCode = 500;
-                        log.error('Internal error(%d): %s', res.statusCode, err.message);
-
-                        return res.send({ error: 'Server error' });
+                        return errorHelper(err, res);
                     }
                 });
             }

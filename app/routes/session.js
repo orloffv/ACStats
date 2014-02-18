@@ -45,10 +45,7 @@
                     if (!err) {
                         return res.send(screen(sessions, SessionProvider.screens.collection));
                     } else {
-                        res.statusCode = 500;
-                        log.error('Internal error(%d): %s', res.statusCode, err.message);
-
-                        return res.send({ error: 'Server error' });
+                        return errorHelper(err, res);
                     }
                 });
             }

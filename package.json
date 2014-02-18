@@ -7,9 +7,8 @@
     "test": "grunt tests"
   },
   "dependencies": {
-    "express": "3.4.4",
     "optimist": "~0.6.1",
-    "mongoose": "~3.8.6",
+    "mongoose": "~3.8.7",
     "winston": "~0.7.2",
     "nconf": "~0.6.9",
     "underscore": "~1.5.2",
@@ -19,7 +18,8 @@
     "mongoose-findorcreate": "~0.1.2",
     "jsonschema": "~0.4.0",
     "winston-rollbar": "~0.1.1",
-    "moment": "~2.5.1"
+    "moment": "~2.5.1",
+    "express": "~3.4.8"
   },
   "devDependencies": {
     "grunt": "~0.4.1",

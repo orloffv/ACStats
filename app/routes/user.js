@@ -15,6 +15,9 @@
             listByServer: function(req, res) {
                 return routes.listWithFilter({server: req.params.id}, req, res);
             },
+            listByCompany: function(req, res) {
+                return routes.listWithFilter({server: req.params.id, 'additional.companyId': req.params.companyId}, req, res);
+            },
             get: function(req, res) {
                 return UserProvider.getById(req.params.id, function(err, user) {
                     if (!user) {
@@ -31,10 +34,16 @@
                     if (!err) {
                         return res.send(screen(users, UserProvider.screens.collection));
                     } else {
-                        res.statusCode = 500;
-                        log.error('Internal error(%d): %s', res.statusCode, err.message);
-
-                        return res.send({ error: 'Server error' });
+                        return errorHelper(err, res);
+                    }
+                });
+            },
+            listCompaniesByServer: function(req, res) {
+                return UserProvider.findAllCompanies({server: req.params.id}, function(err, companies) {
+                    if (!err) {
+                        return res.send(mapping(companies, {id: '_id'}));
+                    } else {
+                        return errorHelper(err, res);
                     }
                 });
             }
@@ -43,5 +52,7 @@
         app.get('/api/users', routes.list);
         app.get('/api/users/:id', routes.get);
         app.get('/api/servers/:id/users', routes.listByServer);
+        app.get('/api/servers/:id/companies', routes.listCompaniesByServer);
+        app.get('/api/servers/:id/companies/:companyId/users', routes.listByCompany);
     };
 })();

@@ -48,9 +48,7 @@
                     if (!err) {
                         return res.send(screen(events, EventProvider.screens.collection));
                     } else {
-                        res.statusCode = 500;
-                        log.error('Internal error(%d): %s', res.statusCode, err.message);
-                        return res.send({ error: 'Server error' });
+                        return errorHelper(err, res);
                     }
                 });
             },
@@ -59,9 +57,7 @@
                     if (!err) {
                         return res.send(screen(events, EventProvider.screens.groupedCollection));
                     } else {
-                        res.statusCode = 500;
-                        log.error('Internal error(%d): %s', res.statusCode, err.message);
-                        return res.send({ error: 'Server error' });
+                        return errorHelper(err, res);
                     }
                 });
             },

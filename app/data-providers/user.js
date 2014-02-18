@@ -5,6 +5,7 @@
         var async      = require('async');
         var UserModel = mongoose.model('User');
         var HitModel = mongoose.model('Hit');
+        var QueryHelper = require('./../libs/query-helper')(mongoose);
 
         var UserProvider = function () {};
 
@@ -106,6 +107,9 @@
                         callback(err, hitResult);
                     }
                 });
+            },
+            findAllCompanies: function(where, callback) {
+                UserModel.findAllCompanies(QueryHelper.getWhere(where), callback);
             },
             screens: UserModel.screens
         };

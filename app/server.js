@@ -5,17 +5,24 @@
     var app = require('./app')(mongoose);
     var config = app.get('config');
 
+    var listenCount = 0;
     var createServer = function(server, app, port, httpsOptions) {
         var serverInstance;
 
         if (httpsOptions) {
             serverInstance = server.createServer(httpsOptions, app);
+            app.set('httpsInstance', serverInstance);
         } else {
             serverInstance = server.createServer(app);
+            app.set('httpInstance', serverInstance);
         }
 
         serverInstance.listen(port, function() {
-            app.get('mongoose').connectServer();
+            if (!listenCount) {
+                app.get('mongoose').connectServer();
+            }
+
+            listenCount++;
 
             console.log('Express server listening on port ' + port);
         });

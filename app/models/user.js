@@ -18,6 +18,31 @@
             events: {type: Number}
         });
 
+        User.statics.findAllCompanies = function(where, callback) {
+            where['additional.companyId'] = {$exists: true};
+
+            return this.aggregate(
+                {
+                    $match: where
+                },
+                {
+                    $group: {
+                        _id: '$additional.companyId',
+                        name: { $first: '$additional.company' },
+                        count: { $sum: 1 },
+                        hits: {$sum: '$hits'},
+                        events: {$sum: '$events'},
+                        lastHitAt: {$last: '$lastHitAt'},
+                        createdAt: {$last: '$createdAt'}
+                    }
+                },
+                {
+                    $sort: { count: -1 }
+                },
+                callback
+            );
+        };
+
         User.statics.countNewCompanies = function(where, callback) {
             var createdAt = where.createdAt;
             where.createdAt = {$exists: true};
