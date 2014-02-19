@@ -66,7 +66,7 @@
             usersActiveByHitsDate: function(req, res) {
                 return StatisticProvider.findUsersActiveByHitsDate({server: req.params.id}, {query:req.query}, function(err, statistics) {
                     if (!err) {
-                        return res.send(statistics);
+                        return res.send(mapping(statistics, {id: '_id'}));
                     } else {
                         return errorHelper(err, res);
                     }
