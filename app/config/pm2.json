@@ -5,5 +5,8 @@
     "out_file"   : "app/logs/child-out.log",
     "pid_file"   : "app/logs/child.pid",
     "exec_mode"  : "cluster_mode",
-    "instances"  : "max"
+    "instances"  : "max",
+    "env": {
+       "NODE_ENV": "production"
+    }
 }]

@@ -12,6 +12,7 @@
             transports.push(
                 new winston.transports.Console({
                     colorize:   true,
+                    timestamp: true,
                     level:      'debug',
                     label:      path
                 })
