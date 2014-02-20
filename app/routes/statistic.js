@@ -71,6 +71,15 @@
                         return errorHelper(err, res);
                     }
                 });
+            },
+            userUserAgents: function(req, res) {
+                return StatisticProvider.finUserUserAgents({server: req.params.id, user: req.params.userId}, {query:req.query}, function(err, statistics) {
+                    if (!err) {
+                        return res.send(mapping(statistics, {useragent: '_id'}));
+                    } else {
+                        return errorHelper(err, res);
+                    }
+                });
             }
         };
 
@@ -81,7 +90,6 @@
         app.get('/api/servers/:id/statistic/event/popular_by_date', routes.eventPopularByDate);
         app.get('/api/servers/:id/statistic/users_companies/count_active_in_all_by_date', routes.countActiveInAllUsersCompaniesByDate);
         app.get('/api/servers/:id/statistic/users/group_by_hits_date', routes.usersActiveByHitsDate);
-
-        //самые активные компании
+        app.get('/api/servers/:id/users/:userId/statistic/useragents', routes.userUserAgents);
     };
 })();

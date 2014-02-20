@@ -5,6 +5,7 @@
         var config = require('./libs/config')(environment);
         var log = require('./libs/log')(module, config);
         var async = require('async');
+        var useragent = require('express-useragent');
 
         mongoose = require('./libs/mongoose')(mongoose, log, config);
 
@@ -27,27 +28,11 @@
         app.configure('testing', function(){
         });
 
-        app.use(function(req, res, next) {
-            var timeoutId = setTimeout(function() {
-                res.status(500);
-
-                return res.send({ error: 'Server timeout' });
-            }, 1000 * 20);
-            next();
-
-            res.on('close', function() {
-                clearTimeout(timeoutId);
-            });
-
-            res.on('header', function() {
-                clearTimeout(timeoutId);
-            });
-        });
-
         // all environments
         app.set('case sensitive routes', false);
         app.set('strict routing', false);
         app.set('log', log);
+        app.use(useragent.express());
         app.use(express.json());
         app.use(express.urlencoded());
         app.use(express.methodOverride());

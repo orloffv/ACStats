@@ -22,6 +22,9 @@
             getTimingGroupByPartDate: function(where, parts, callback) {
                 SessionModel.getTimingGroupByPartDate(where, parts, callback);
             },
+            finUserUserAgents: function(where, limit, callback) {
+                SessionModel.finUserUserAgents(where, limit, callback);
+            },
             count: function(where, callback) {
                 SessionModel.count(where, callback);
             },
@@ -72,14 +75,11 @@
                     });
                 });
             },
-            saveMultiple: function(data, callback) {
+            saveMultiple: function(data, callback, useragent) {
                 var toSave = [], sessions = [], that = this;
+                useragent = useragent || {};
 
-                if (_.isArray(data)) {
-                    sessions = _.map(data, function(object) {
-                        return object;
-                    });
-                } else {
+                if (!_.isArray(data)) {
                     sessions = [data];
                 }
 
@@ -88,6 +88,8 @@
                 }
 
                 toSave = _.map(sessions, function(session) {
+                    session = _.extend(session, {useragent: useragent});
+
                     return function(cb) {
                         return that.save(session, cb);
                     };

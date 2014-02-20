@@ -13,11 +13,45 @@
             additional: Schema.Types.Mixed,
             timing: Schema.Types.Mixed,
             user: {type: Schema.Types.ObjectId, ref: 'User'},
-            server: {type: Schema.Types.ObjectId, ref: 'Server'}
+            server: {type: Schema.Types.ObjectId, ref: 'Server'},
+            useragent: {
+                Browser: String,
+                Version: String,
+                OS: String,
+                Platform: String
+            }
         });
 
         Session.statics.countGroupByPartDate = function(where, parts, callback) {
             QueryHelper.countGroupByPartDate(this, where, parts, callback);
+        };
+
+        Session.statics.finUserUserAgents = function(where, limit, callback) {
+            where.useragent = {$exists: true};
+
+            return this.aggregate(
+                {
+                    $match: where
+                },
+                {
+                    $group: {
+                        _id: {
+                            browser : "$useragent.Browser",
+                            version : "$useragent.Version",
+                            os : "$useragent.OS",
+                            platform : "$useragent.Platform"
+                        },
+                        count: { $sum: 1 },
+                        firstAt: {$first: "$createdAt"},
+                        lastAt: {$last: "$createdAt"}
+                    }
+                },
+                {
+                    $sort: { avg: -1, count: -1 }
+                },
+                limit,
+                callback
+            );
         };
 
         Session.statics.getTimingGroupByPartDate = function(where, parts, callback) {

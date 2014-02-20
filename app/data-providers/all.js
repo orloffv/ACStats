@@ -12,8 +12,9 @@
         var AllProvider = function () {};
 
         AllProvider.prototype = {
-            saveMultiple: function(data, callback) {
+            saveMultiple: function(data, callback, useragent) {
                 var toSave = {}, timestamp, currentTimestamp = dateHelper.getTimestamp();
+                useragent = useragent || {};
 
                 if (data && _.isObject(data) && data.timestamp) {
                     timestamp = data.timestamp;
@@ -36,6 +37,7 @@
                                     } else if (modelName === 'hits') {
                                         dataProviderSave = HitProvider.save;
                                     } else if (modelName === 'sessions') {
+                                        item = _.extend(item, {useragent: useragent});
                                         dataProviderSave = SessionProvider.save;
                                     }
 

@@ -27,7 +27,7 @@
                     } else {
                         return errorHelper(err, res);
                     }
-                });
+                }, req.useragent);
             },
             get: function(req, res) {
                 return SessionProvider.getById(req.params.id, function(err, session) {

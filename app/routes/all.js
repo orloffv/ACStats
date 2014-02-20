@@ -17,7 +17,7 @@
                     } else {
                         return errorHelper(err, res);
                     }
-                });
+                }, req.useragent);
             }
         };
 

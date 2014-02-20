@@ -19,7 +19,8 @@
     "jsonschema": "~0.4.0",
     "winston-rollbar": "~0.1.1",
     "moment": "~2.5.1",
-    "express": "~3.4.8"
+    "express": "~3.4.8",
+    "express-useragent": "0.0.11"
   },
   "devDependencies": {
     "grunt": "~0.4.1",

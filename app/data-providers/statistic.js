@@ -139,6 +139,9 @@
             findUsersActiveByHitsDate: function(where, options, callback) {
                 UserProvider.findUsersActiveByHitsDate(QueryHelper.getWhere(where, options), QueryHelper.getLimit(options), callback);
             },
+            finUserUserAgents: function(where, options, callback) {
+                SessionProvider.finUserUserAgents(QueryHelper.getWhere(where, options), QueryHelper.getLimit(options), callback);
+            },
             screens: {
                 models: screenModel
             }
