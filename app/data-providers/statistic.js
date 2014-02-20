@@ -3,7 +3,6 @@
     module.exports = function(mongoose, log) {
         var _   = require('underscore');
         var async = require('async');
-        var moment = require('moment');
         var HitProvider = require('./hit')(mongoose, log);
         var EventProvider = require('./event')(mongoose, log);
         var SessionProvider = require('./session')(mongoose, log);

@@ -2,7 +2,6 @@
     "use strict";
 
     var _ = require('underscore');
-    var moment = require('moment');
 
     module.exports = function(mongoose) {
         var QueryHelper = require('./../libs/query-helper')(mongoose);

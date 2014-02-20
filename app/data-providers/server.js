@@ -17,6 +17,9 @@
             findOrCreate: function(name, callback) {
                 ServerModel.findOrCreate({name: name}, callback);
             },
+            findFirstServer: function(callback) {
+                ServerModel.findOne().exec(callback);
+            },
             screens: ServerModel.screens
         };
 
