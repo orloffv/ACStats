@@ -9,10 +9,10 @@
 
         ServerProvider.prototype = {
             findAll: function (callback) {
-                ServerModel.find({}).populate('user').exec(callback);
+                ServerModel.find({}).exec(callback);
             },
             getById: function(id, callback) {
-                ServerModel.findById(id).populate('user server').exec(callback);
+                ServerModel.findById(id).exec(callback);
             },
             findOrCreate: function(name, callback) {
                 ServerModel.findOrCreate({name: name}, callback);

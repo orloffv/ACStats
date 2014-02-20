@@ -14,7 +14,7 @@
                 UserModel.find(where).populate('server').exec(callback);
             },
             getById: function(id, callback) {
-                UserModel.findById(id).populate('user server').exec(callback);
+                UserModel.findById(id).exec(callback);
             },
             findOrCreate: function(name, serverId, updateOptions, callback) {
                 UserModel.findOrCreate({name: name, server: serverId}, updateOptions, callback);

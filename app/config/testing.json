@@ -5,11 +5,6 @@
     "log": {
         "file": "app/logs/test.txt"
     },
-    "https": {
-        "key": "app/fixtures/testing/keys/key.pem",
-        "cert": "app/fixtures/testing/keys/cert.pem",
-        "port": 3001
-    },
     "http": {
         "port": 3000
     }

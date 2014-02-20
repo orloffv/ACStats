@@ -79,9 +79,7 @@
                 var toSave = [], sessions = [], that = this;
                 useragent = useragent || {};
 
-                if (!_.isArray(data)) {
-                    sessions = [data];
-                }
+                sessions = _.isArray(data) ? data : [data];
 
                 if (!_.size(sessions)) {
                     return callback({name: 'Empty'});

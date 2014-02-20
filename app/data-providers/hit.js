@@ -85,9 +85,7 @@
             saveMultiple: function(data, callback) {
                 var toSave = [], hits = [], that = this;
 
-                if (!_.isArray(data)) {
-                    hits = [data];
-                }
+                hits = _.isArray(data) ? data : [data];
 
                 if (!_.size(hits)) {
                     return callback({name: 'Empty'});
