@@ -101,6 +101,10 @@
                                 });
                             }
 
+                            result = _.sortBy(result, function(item) {
+                                return -item.currentHits;
+                            });
+
                             callback(err, result);
                         });
                     } else {
