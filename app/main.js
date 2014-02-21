@@ -6,6 +6,7 @@
         var log = require('./libs/log')(module, config);
         var async = require('async');
         var useragent = require('express-useragent');
+        var errorHelper = require('./libs/error-helper')(log);
 
         mongoose = require('./libs/mongoose')(mongoose, log, config);
 
@@ -48,17 +49,7 @@
         });
 
         app.use(function(err, req, res, next) {
-            log.error('Internal error(%d): %s', res.statusCode, err.message, err);
-
-            if (err.message === 'invalid json') {
-                res.status(400);
-
-                return res.send({ error: 'Bad Request' });
-            } else {
-                res.status(500);
-
-                return res.send({ error: 'Server error' });
-            }
+            return errorHelper(err, res);
         });
 
         require('./routes/event')(app, mongoose, log);

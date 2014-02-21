@@ -18,6 +18,10 @@
                 res.statusCode = 400;
 
                 return res.send({error: 'Empty request'});
+            } else if (err.message === 'invalid json') {
+                res.status(400);
+
+                return res.send({ error: 'Bad Request' });
             } else {
                 res.statusCode = 500;
                 log.error('Internal error(%d): %s', res.statusCode, err.message);

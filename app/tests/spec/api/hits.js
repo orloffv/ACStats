@@ -50,7 +50,6 @@
                     });
             });
 
-
             it('GET /api/hits/1 should contain not found', function (done) {
                 request(app)
                     .get('/api/hits/1')
@@ -154,6 +153,20 @@
                     .send([])
                     .expect(400)
                     .expect({ error: 'Empty request' })
+                    .end(function(err, res) {
+                        if (err) {
+                            return done(err);
+                        }
+                        done();
+                    });
+            });
+
+            it('POST /api/hits empty [] request, response should contain Bad Request', function (done) {
+                request(app)
+                    .post('/api/hits')
+                    .send('')
+                    .expect(400)
+                    .expect({ error: 'Bad Request' })
                     .end(function(err, res) {
                         if (err) {
                             return done(err);
