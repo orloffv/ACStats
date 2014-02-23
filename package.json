@@ -21,10 +21,10 @@
     "moment": "~2.5.1",
     "express": "~3.4.8",
     "express-useragent": "0.0.11",
-    "winston-loggly": "~1.0.1"
+    "winston-loggly": "~1.0.1",
+    "grunt": "~0.4.1"
   },
   "devDependencies": {
-    "grunt": "~0.4.1",
     "grunt-contrib-jshint": "~0.6.4",
     "mocha": "1.7.0",
     "should": "1.2.1",
