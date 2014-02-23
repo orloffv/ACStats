@@ -2,13 +2,14 @@
     "use strict";
     var winston = require('winston');
     require('winston-rollbar');
+    require('winston-loggly');
 
     function getLogger(module, config) {
-        var path = module.filename.split('/').slice(-2).join('/'); //отобразим метку с именем файла, который выводит сообщение
+        var path = module.filename.split('/').slice(-2).join('/');
 
         var transports = [];
 
-        if (config.get('environment') === 'development' || config.get('environment') === 'testing') {
+        if (config.get('environment') === 'development') {
             transports.push(
                 new winston.transports.Console({
                     colorize:   true,
@@ -26,19 +27,33 @@
                     level: 'warn'
                 })
             );
+        }
 
+        if (config.get('rollbarAccessToken')) {
+            transports.push(
+                new winston.transports.Rollbar({
+                    rollbarAccessToken: config.get('rollbarAccessToken'),
+                    level: 'warn',
+                    rollbarConfig: {
+                        environment: config.get('environment')
+                    }
+                })
+            );
+        }
 
-            if (config.get('rollbarAccessToken')) {
-                transports.push(
-                    new winston.transports.Rollbar({
-                        rollbarAccessToken: config.get('rollbarAccessToken'),
-                        level: 'warn',
-                        rollbarConfig: {
-                            environment: config.get('environment')
-                        }
-                    })
-                );
-            }
+        if (config.get('loggly')) {
+            transports.push(
+                new winston.transports.Loggly({
+                    subdomain: config.get('loggly:subdomain'),
+                    inputToken: config.get('loggly:inputToken'),
+                    auth: {
+                        "username": config.get('loggly:username'),
+                        "password": config.get('loggly:password')
+                    },
+                    level: 'info',
+                    tags: ['ACStats']
+                })
+            );
         }
 
         return new winston.Logger({

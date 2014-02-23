@@ -5,7 +5,6 @@
     "log": {
         "file": "app/logs/log.txt"
     },
-    "rollbarAccessToken": "dcef5eacfc04425e923c51c92d4d2fb6",
     "http": {
         "port": 3000
     }

@@ -23,12 +23,9 @@
             }
 
             listenCount++;
-
-            console.log('Express server listening on port ' + port);
+            app.get('log').info('Express server listening on port ' + port);
         });
     };
-
-    console.log('For exit: press ctrl+c');
 
     if (config.get('https')) {
         var httpsServer = require('https');

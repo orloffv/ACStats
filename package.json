@@ -20,7 +20,8 @@
     "winston-rollbar": "~0.1.1",
     "moment": "~2.5.1",
     "express": "~3.4.8",
-    "express-useragent": "0.0.11"
+    "express-useragent": "0.0.11",
+    "winston-loggly": "~1.0.1"
   },
   "devDependencies": {
     "grunt": "~0.4.1",
