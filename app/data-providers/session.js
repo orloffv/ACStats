@@ -28,6 +28,9 @@
             findBrowsers: function(where, callback) {
                 SessionModel.findBrowsers(where, callback);
             },
+            findCities: function(where, callback) {
+                SessionModel.findCities(where, callback);
+            },
             count: function(where, callback) {
                 SessionModel.count(where, callback);
             },

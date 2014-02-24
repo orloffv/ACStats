@@ -104,6 +104,26 @@
             );
         };
 
+        Session.statics.findCities = function(where, callback) {
+            where['geoip.city'] = {$exists: true};
+
+            return this.aggregate(
+                {
+                    $match: where
+                },
+                {
+                    $group: {
+                        _id: "$geoip.city",
+                        count: { $sum: 1 }
+                    }
+                },
+                {
+                    $sort: {count: -1 }
+                },
+                callback
+            );
+        };
+
         Session.statics.getTimingGroupByPartDate = function(where, parts, callback) {
             var secondsEnd, periodSeconds, secondsInPart;
             if (where.createdAt) {

@@ -89,6 +89,15 @@
                         return errorHelper(err, res);
                     }
                 });
+            },
+            countCities: function(req, res) {
+                return StatisticProvider.countCities({server: req.params.id}, {query:req.query}, function(err, statistics) {
+                    if (!err) {
+                        return res.send(mapping(statistics, {city: '_id'}));
+                    } else {
+                        return errorHelper(err, res);
+                    }
+                });
             }
         };
 
@@ -101,5 +110,6 @@
         app.get('/api/servers/:id/statistic/users/group_by_hits_date', routes.usersActiveByHitsDate);
         app.get('/api/servers/:id/users/:userId/statistic/useragents', routes.userUserAgents);
         app.get('/api/servers/:id/statistic/count_browsers', routes.countBrowsers);
+        app.get('/api/servers/:id/statistic/count_cities', routes.countCities);
     };
 })();

@@ -145,6 +145,9 @@
             countBrowsers: function(where, options, callback) {
                 SessionProvider.findBrowsers(QueryHelper.getWhere(where, options), callback);
             },
+            countCities: function(where, options, callback) {
+                SessionProvider.findCities(QueryHelper.getWhere(where, options), callback);
+            },
             screens: {
                 models: screenModel
             }
