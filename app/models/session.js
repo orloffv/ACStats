@@ -47,9 +47,29 @@
                     }
                 },
                 {
-                    $sort: { avg: -1, count: -1 }
+                    $sort: {count: -1 }
                 },
                 limit,
+                callback
+            );
+        };
+
+        Session.statics.findBrowsers = function(where, callback) {
+            where.useragent = {$exists: true};
+
+            return this.aggregate(
+                {
+                    $match: where
+                },
+                {
+                    $group: {
+                        _id: "$useragent.Browser",
+                        count: { $sum: 1 }
+                    }
+                },
+                {
+                    $sort: {count: -1 }
+                },
                 callback
             );
         };

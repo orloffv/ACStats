@@ -142,6 +142,9 @@
             finUserUserAgents: function(where, options, callback) {
                 SessionProvider.finUserUserAgents(QueryHelper.getWhere(where, options), QueryHelper.getLimit(options), callback);
             },
+            countBrowsers: function(where, options, callback) {
+                SessionProvider.findBrowsers(QueryHelper.getWhere(where, options), callback);
+            },
             screens: {
                 models: screenModel
             }

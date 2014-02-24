@@ -25,6 +25,9 @@
             finUserUserAgents: function(where, limit, callback) {
                 SessionModel.finUserUserAgents(where, limit, callback);
             },
+            findBrowsers: function(where, callback) {
+                SessionModel.findBrowsers(where, callback);
+            },
             count: function(where, callback) {
                 SessionModel.count(where, callback);
             },

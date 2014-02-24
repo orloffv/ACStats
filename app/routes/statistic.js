@@ -80,6 +80,15 @@
                         return errorHelper(err, res);
                     }
                 });
+            },
+            countBrowsers: function(req, res) {
+                return StatisticProvider.countBrowsers({server: req.params.id}, {query:req.query}, function(err, statistics) {
+                    if (!err) {
+                        return res.send(mapping(statistics, {browser: '_id'}));
+                    } else {
+                        return errorHelper(err, res);
+                    }
+                });
             }
         };
 
@@ -91,5 +100,6 @@
         app.get('/api/servers/:id/statistic/users_companies/count_active_in_all_by_date', routes.countActiveInAllUsersCompaniesByDate);
         app.get('/api/servers/:id/statistic/users/group_by_hits_date', routes.usersActiveByHitsDate);
         app.get('/api/servers/:id/users/:userId/statistic/useragents', routes.userUserAgents);
+        app.get('/api/servers/:id/statistic/count_browsers', routes.countBrowsers);
     };
 })();
