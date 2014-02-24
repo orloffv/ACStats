@@ -19,7 +19,8 @@
                 Version: String,
                 OS: String,
                 Platform: String
-            }
+            },
+            ip: String
         });
 
         Session.statics.countGroupByPartDate = function(where, parts, callback) {

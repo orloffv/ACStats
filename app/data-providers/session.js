@@ -78,9 +78,9 @@
                     });
                 });
             },
-            saveMultiple: function(data, callback, useragent) {
+            saveMultiple: function(data, callback, options) {
                 var toSave = [], sessions = [], that = this;
-                useragent = useragent || {};
+                options = options || {};
 
                 sessions = _.isArray(data) ? data : [data];
 
@@ -89,7 +89,7 @@
                 }
 
                 toSave = _.map(sessions, function(session) {
-                    session = _.extend(session, {useragent: useragent});
+                    session = _.extend(session, {useragent: options.useragent, ip: options.ip});
 
                     return function(cb) {
                         return that.save(session, cb);

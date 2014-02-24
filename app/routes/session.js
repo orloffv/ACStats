@@ -27,7 +27,10 @@
                     } else {
                         return errorHelper(err, res);
                     }
-                }, req.useragent);
+                }, {
+                    useragent: req.useragent,
+                    ip: req.ip
+                });
             },
             get: function(req, res) {
                 return SessionProvider.getById(req.params.id, function(err, session) {

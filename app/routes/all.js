@@ -17,7 +17,10 @@
                     } else {
                         return errorHelper(err, res);
                     }
-                }, req.useragent);
+                }, {
+                    useragent: req.useragent,
+                    ip: req.ip
+                });
             }
         };
 

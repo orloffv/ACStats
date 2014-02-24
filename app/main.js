@@ -30,6 +30,7 @@
         });
 
         // all environments
+        app.enable('trust proxy');
         app.set('case sensitive routes', false);
         app.set('strict routing', false);
         app.set('log', log);

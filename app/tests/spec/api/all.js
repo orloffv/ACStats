@@ -51,6 +51,23 @@
             }, data);
         };
 
+        var exampleSession = function(data) {
+            data = data || {};
+
+            return _.extend({
+                "user": {
+                    "name": "test@example.com",
+                    "additional": {
+                        "companyId": "123",
+                        "userId": "123"
+                    }
+                },
+                "server": {
+                    "name": "development"
+                }
+            }, data);
+        };
+
         describe('API All', function() {
             beforeEach(function(done) {
                 mongoose.dropAllCollections(done);
@@ -155,7 +172,7 @@
                     });
             });
 
-            it('POST /api/all should successfully save 5 events & 4 hits', function (done) {
+            it('POST /api/all should successfully save 5 events & 4 hits & 1 session', function (done) {
                 request(app)
                     .post('/api/all')
                     .send({
@@ -171,6 +188,9 @@
                             exampleHit(),
                             exampleHit(),
                             exampleHit()
+                        ],
+                        sessions: [
+                            exampleSession()
                         ]
                     })
                     .expect(201)
@@ -181,8 +201,10 @@
 
                         assert(res.body.events.length === 5);
                         assert(res.body.hits.length === 4);
+                        assert(res.body.sessions.length === 1);
                         assert(res.body.events[0].id);
                         assert(res.body.hits[0].id);
+                        assert(res.body.sessions[0].id);
 
                         request(app)
                             .get('/api/users')
