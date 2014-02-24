@@ -27,7 +27,8 @@
                         name: { $first: "$name" },
                         firstAt: {$first: "$createdAt"},
                         lastAt: {$last: "$createdAt"},
-                        users: { $addToSet: "$user" }
+                        users: { $addToSet: "$user" },
+                        additional: {$addToSet: "$additional"}
                     }
                 },
                 {
@@ -83,7 +84,8 @@
             count: true,
             firstAt: true,
             lastAt: true,
-            users: true
+            users: true,
+            additional: true
         };
 
         EventModel.screens = {
