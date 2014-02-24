@@ -21,6 +21,9 @@
             ping: function(req, res) {
                 res.send({msg: 'pong'});
             },
+            ip: function(req, res) {
+                res.send({ip: req.ip, ip_manual: req.headers['x-forwarded-for'] || req.connection.remoteAddress});
+            },
             pingMongo: function(req, res) {
                 ServerProvider.findFirstServer(function(err, response) {
                     if (!err) {
