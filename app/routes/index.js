@@ -38,5 +38,6 @@
         app.get('/', routes.index);
         app.get('/ping', routes.ping);
         app.get('/ping_mongo', routes.pingMongo);
+        app.get('/ip', routes.ip);
     };
 })();
