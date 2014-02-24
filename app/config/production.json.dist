@@ -14,5 +14,8 @@
         "inputToken": "",
         "username": "",
         "password": ""
+    },
+    "geoip": {
+        "city": "app/data/GeoIPCity.dat"
     }
 }

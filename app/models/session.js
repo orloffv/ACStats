@@ -3,8 +3,15 @@
 
     var findOrCreate = require('mongoose-findorcreate');
     var moment = require('moment');
+    var path = require('path');
 
-    module.exports = function(mongoose) {
+    module.exports = function(mongoose, config) {
+        var geoip, geoipCity;
+        if (config.get('geoip:city')) {
+            geoip = require('geoip');
+            geoipCity = new geoip.City(path.resolve(config.get('geoip:city')), false);
+        }
+
         var QueryHelper = require('./../libs/query-helper')(mongoose);
         var Schema   = mongoose.Schema;
 
@@ -20,7 +27,29 @@
                 OS: String,
                 Platform: String
             },
-            ip: String
+            ip: String,
+            geoip: {
+                country: String,
+                region: String,
+                city: String,
+                latitude: {type: Number},
+                longitude: {type: Number}
+            }
+        });
+
+        Session.pre('save', function (next) {
+            if (this.ip && geoipCity) {
+                var geoIPResult = geoipCity.lookupSync(this.ip);
+                if (geoIPResult) {
+                    this.geoip = {
+                        country: geoIPResult.country_code,
+                        city: geoIPResult.city,
+                        latitude: geoIPResult.latitude,
+                        longitude: geoIPResult.longitude
+                    };
+                }
+            }
+            next();
         });
 
         Session.statics.countGroupByPartDate = function(where, parts, callback) {

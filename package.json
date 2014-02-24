@@ -22,7 +22,8 @@
     "express": "~3.4.8",
     "express-useragent": "0.0.11",
     "winston-loggly": "~1.0.1",
-    "grunt": "~0.4.1"
+    "grunt": "~0.4.1",
+    "geoip": "~0.5.2"
   },
   "devDependencies": {
     "grunt-contrib-jshint": "~0.6.5",
