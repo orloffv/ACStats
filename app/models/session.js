@@ -151,7 +151,7 @@
                         timing.loadPage += v.loadPage;
                         timing.loadSecurity += v.loadSecurity;
                         timing.loadJS += v.loadJS;
-                        timing.count++;
+                        timing.count += v.count;
                     });
 
                     return timing;
