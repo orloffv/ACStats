@@ -17,7 +17,16 @@
                 EventModel.find(where).populate('user server').exec(callback);
             },
             findAllWithGroupByName: function(where, callback) {
-                EventModel.findAllWithGroupByName(QueryHelper.getWhere(where), callback);
+                EventModel.findAllWithGroupByName(QueryHelper.getWhere(where), function(err, result) {
+                    if (!err) {
+                        result = _.map(result, function(item) {
+                            item.users = _.size(item.users);
+
+                            return item;
+                        });
+                    }
+                    callback(err, result);
+                });
             },
             count: function(where, callback) {
                 EventModel.count(where, callback);

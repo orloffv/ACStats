@@ -17,7 +17,17 @@
                 HitModel.find(where).populate('user server').exec(callback);
             },
             findAllWithGroupByUrl: function(where, callback) {
-                HitModel.findAllWithGroupByUrl(QueryHelper.getWhere(where), callback);
+                HitModel.findAllWithGroupByUrl(QueryHelper.getWhere(where), function(err ,result) {
+                    if (!err) {
+                        result = _.map(result, function(item) {
+                            item.users = _.size(item.users);
+
+                            return item;
+                        });
+                    }
+
+                    callback(err, result);
+                });
             },
             count: function(where, callback) {
                 HitModel.count(where, callback);
