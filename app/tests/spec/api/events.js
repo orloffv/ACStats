@@ -366,7 +366,7 @@
 
                                 assert(res.body.length === 1);
                                 assert(res.body[0].name === exampleEvent().name);
-                                assert(res.body[0].users.length === 2);
+                                assert(res.body[0].users === 2);
                                 assert(res.body[0].count === 3);
                                 done();
                             });
@@ -399,7 +399,7 @@
 
                                 assert(res.body.length === 1);
                                 assert(res.body[0].name === exampleEvent().name);
-                                assert(res.body[0].users.length === 1);
+                                assert(res.body[0].users === 1);
                                 assert(res.body[0].count === 2);
                                 done();
                             });

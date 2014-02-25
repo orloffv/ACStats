@@ -18,6 +18,15 @@
             listByCompany: function(req, res) {
                 return routes.listWithFilter({server: req.params.id, 'additional.companyId': req.params.companyId}, req, res);
             },
+            listByEventHash: function(req, res) {
+                return UserProvider.findByEventHash({server: req.params.id, eventHash: req.params.eventHash}, {query: req.query}, function(err, users) {
+                    if (!err) {
+                        return res.send(screen(users, UserProvider.screens.collection));
+                    } else {
+                        return errorHelper(err, res);
+                    }
+                });
+            },
             get: function(req, res) {
                 return UserProvider.getById(req.params.id, function(err, user) {
                     if (!user) {
@@ -55,5 +64,6 @@
         app.get('/api/servers/:id/users', routes.listByServer);
         app.get('/api/servers/:id/companies', routes.listCompaniesByServer);
         app.get('/api/servers/:id/companies/:companyId/users', routes.listByCompany);
+        app.get('/api/servers/:id/events/:eventHash/users', routes.listByEventHash);
     };
 })();

@@ -5,14 +5,45 @@
         var async      = require('async');
         var UserModel = mongoose.model('User');
         var HitModel = mongoose.model('Hit');
+        var EventModel = mongoose.model('Event');
         var QueryHelper = require('./../libs/query-helper')(mongoose);
 
         var UserProvider = function () {};
 
         UserProvider.prototype = {
-            findAll: function (where, options, callback) {
+            findAll: function(where, options, callback) {
                 var queryOptions = QueryHelper.getOptions(where, options);
-                UserModel.find(queryOptions.where, null, {sort: queryOptions.sort}).exec(callback);
+                UserModel.find(queryOptions.where, null, {sort: queryOptions.sort}, callback);
+            },
+            findByEventHash: function(where, options, callback) {
+                EventModel.findAllWithGroupByUser(QueryHelper.getWhere(where, options), function(err, eventResult) {
+                    if (!err) {
+                        UserModel.find({_id: {$in: _.pluck(eventResult, '_id')}}, function(err, userResult) {
+                            var result = [];
+                            if (!err) {
+                                result = _.map(userResult, function(item) {
+                                    var currentUser = _.find(eventResult, function(event) {
+                                        return _.isEqual(event._id, item._id);
+                                    });
+
+                                    item.events = currentUser.count;
+                                    item.lastAt = currentUser.lastAt;
+                                    item.firstAt = currentUser.firstAt;
+
+                                    return item;
+                                });
+                            }
+
+                            result = _.sortBy(result, function(item) {
+                                return -item.events;
+                            });
+
+                            callback(err, result);
+                        });
+                    } else {
+                        callback(err, eventResult);
+                    }
+                });
             },
             getById: function(id, callback) {
                 UserModel.findById(id).exec(callback);

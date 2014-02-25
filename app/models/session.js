@@ -177,15 +177,8 @@
             createdAt: true,
             additional: true,
             timing: true,
-            user: {
-                id: true,
-                name: true,
-                additional: true
-            },
-            server: {
-                id: true,
-                name: true
-            }
+            user: true,
+            server: true
         };
 
         SessionModel.screens = {

@@ -15,6 +15,26 @@
             server: {type: Schema.Types.ObjectId, ref: 'Server'}
         });
 
+        Event.statics.findAllWithGroupByUser = function(where, callback) {
+            return this.aggregate(
+                {
+                    $match: where
+                },
+                {
+                    $group: {
+                        _id: '$user',
+                        count: { $sum: 1 },
+                        firstAt: {$first: "$createdAt"},
+                        lastAt: {$last: "$createdAt"}
+                    }
+                },
+                {
+                    $sort: { count: -1 }
+                },
+                callback
+            );
+        };
+
         Event.statics.findAllWithGroupByName = function(where, callback) {
             return this.aggregate(
                 {

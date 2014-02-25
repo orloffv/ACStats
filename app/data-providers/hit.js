@@ -14,7 +14,7 @@
 
         HitProvider.prototype = {
             findAll: function (where, callback) {
-                HitModel.find(where).populate('user server').exec(callback);
+                HitModel.find(where, callback);
             },
             findAllWithGroupByUrl: function(where, callback) {
                 HitModel.findAllWithGroupByUrl(QueryHelper.getWhere(where), function(err ,result) {

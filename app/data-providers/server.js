@@ -9,7 +9,7 @@
 
         ServerProvider.prototype = {
             findAll: function (callback) {
-                ServerModel.find({}).exec(callback);
+                ServerModel.find({}, callback);
             },
             getById: function(id, callback) {
                 ServerModel.findById(id).exec(callback);

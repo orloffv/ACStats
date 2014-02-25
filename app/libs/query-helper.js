@@ -2,7 +2,8 @@
     "use strict";
 
     var _ = require('underscore'),
-        moment = require('moment');
+        moment = require('moment'),
+        base64 = require('js-base64').Base64;
 
     module.exports = function(mongoose) {
         var QueryHelper = function () {};
@@ -17,6 +18,8 @@
                 _.each(where, function(value, key) {
                     if (key === 'user' || key === 'server') {
                         whereExpressions[key] = mongoose.Types.ObjectId(value);
+                    } else if (key === 'eventHash') {
+                        whereExpressions.name = base64.decode(value);
                     } else {
                         whereExpressions[key] = value;
                     }

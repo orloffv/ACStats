@@ -107,13 +107,12 @@
             additional: true,
             createdAt: true,
             lastHitAt: true,
-            server: {
-                id: true,
-                name: true
-            },
+            server: true,
             hits: true,
             events: true,
-            sessions: true
+            sessions: true,
+            lastAt: true,
+            firstAt: true
         };
 
         UserModel.screens = {

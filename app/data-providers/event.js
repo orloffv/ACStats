@@ -14,7 +14,7 @@
 
         EventProvider.prototype = {
             findAll: function(where, callback) {
-                EventModel.find(where).populate('user server').exec(callback);
+                EventModel.find(where, callback);
             },
             findAllWithGroupByName: function(where, callback) {
                 EventModel.findAllWithGroupByName(QueryHelper.getWhere(where), function(err, result) {
