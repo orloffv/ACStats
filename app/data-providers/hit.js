@@ -35,7 +35,7 @@
                 var hitValidate = validate(hit, HitSchema);
                 if (!_.size(hitValidate.errors)) {
                     ServerProvider.findOrCreate(hit.server.name, function(err, server, serverCreated) {
-                        UserProvider.findOrCreate(hit.user.name, server.id, {additional: hit.user.additional}, function(err, user, userCreated) {
+                        UserProvider.findOrCreate(hit.user.name, server.id, {additional: hit.user.additional, createdAt: hit.createdAt}, function(err, user, userCreated) {
                             hit.server = server.id;
                             hit.user = user.id;
 

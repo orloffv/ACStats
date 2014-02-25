@@ -132,6 +132,43 @@
                     });
             });
 
+            it('POST /api/all should successfully save 1 event with custom createdAt, user createdAt should equal event createdAt', function (done) {
+                var timestamp = Math.round(new Date().getTime()/1000);
+                var timestampWithDiff = timestamp;
+
+                request(app)
+                    .post('/api/all')
+                    .send({
+                        events: [
+                            exampleEvent({createdTimestamp: timestampWithDiff-10000})
+                        ],
+                        timestamp: timestampWithDiff
+                    })
+                    .expect(201)
+                    .end(function(err, res) {
+                        if (err) {
+                            return done(err);
+                        }
+
+                        assert(res.body.events.length === 1);
+                        assert(res.body.events[0].id);
+
+                        request(app)
+                            .get('/api/users')
+                            .expect(200)
+                            .end(function(err, res) {
+                                if (err) {
+                                    return done(err);
+                                }
+
+                                assert(new Date(res.body[0].createdAt).getTime() === new Date((timestampWithDiff - 10000) * 1000).getTime());
+                                assert(res.body.length === 1);
+
+                                done();
+                            });
+                    });
+            });
+
             it('POST /api/all empty [] request, response should contain Bad Request', function (done) {
                 request(app)
                     .post('/api/all')

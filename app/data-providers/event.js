@@ -35,7 +35,7 @@
                 var eventValidate = validate(event, EventSchema);
                 if (!_.size(eventValidate.errors)) {
                     ServerProvider.findOrCreate(event.server.name, function(err, server, serverCreated) {
-                        UserProvider.findOrCreate(event.user.name, server.id, {additional: event.user.additional}, function(err, user, userCreated) {
+                        UserProvider.findOrCreate(event.user.name, server.id, {additional: event.user.additional, createdAt: event.createdAt}, function(err, user, userCreated) {
                             event.server = server.id;
                             event.user = user.id;
 

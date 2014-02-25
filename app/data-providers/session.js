@@ -39,7 +39,7 @@
             },
             save: function (session, callback) {
                 ServerProvider.findOrCreate(session.server.name, function(err, server, serverCreated) {
-                    UserProvider.findOrCreate(session.user.name, server.id, {additional: session.user.additional}, function(err, user, userCreated) {
+                    UserProvider.findOrCreate(session.user.name, server.id, {additional: session.user.additional, createdAt: session.createdAt}, function(err, user, userCreated) {
                         session.server = server.id;
                         session.user = user.id;
 
