@@ -17,6 +17,8 @@
                 _.each(where, function(value, key) {
                     if (key === 'user' || key === 'server') {
                         whereExpressions[key] = mongoose.Types.ObjectId(value);
+                    } else {
+                        whereExpressions[key] = value;
                     }
                 });
 
@@ -35,6 +37,28 @@
                 }
 
                 return whereExpressions;
+            },
+            getOptions: function(where, options) {
+                var result = {
+                    where: this.getWhere(where, options),
+                    limit: this.getLimit(options),
+                    sort: this.getSort(options)
+                };
+
+                return result;
+            },
+            getSort: function(options) {
+                var sort = {};
+
+                options = options || {};
+
+                if (options.query) {
+                    if (options.query.order) {
+                        sort[options.query.order] = -1;
+                    }
+                }
+
+                return sort;
             },
             getLimit: function(options) {
                 var limitExpressions = {$limit: 50};

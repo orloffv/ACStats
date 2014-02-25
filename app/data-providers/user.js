@@ -10,8 +10,9 @@
         var UserProvider = function () {};
 
         UserProvider.prototype = {
-            findAll: function (where, callback) {
-                UserModel.find(where).populate('server').exec(callback);
+            findAll: function (where, options, callback) {
+                var queryOptions = QueryHelper.getOptions(where, options);
+                UserModel.find(queryOptions.where, null, {sort: queryOptions.sort}).exec(callback);
             },
             getById: function(id, callback) {
                 UserModel.findById(id).exec(callback);
@@ -112,8 +113,8 @@
                     }
                 });
             },
-            findAllCompanies: function(where, callback) {
-                UserModel.findAllCompanies(QueryHelper.getWhere(where), callback);
+            findAllCompanies: function(where, options, callback) {
+                UserModel.findAllCompanies(QueryHelper.getOptions(where, options), callback);
             },
             screens: UserModel.screens
         };

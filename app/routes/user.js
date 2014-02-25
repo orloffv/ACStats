@@ -30,7 +30,7 @@
                 });
             },
             listWithFilter: function(where, req, res) {
-                return UserProvider.findAll(where, function(err, users) {
+                return UserProvider.findAll(where, {query: req.query}, function(err, users) {
                     if (!err) {
                         return res.send(screen(users, UserProvider.screens.collection));
                     } else {
@@ -39,7 +39,7 @@
                 });
             },
             listCompaniesByServer: function(req, res) {
-                return UserProvider.findAllCompanies({server: req.params.id}, function(err, companies) {
+                return UserProvider.findAllCompanies({server: req.params.id}, {query:req.query}, function(err, companies) {
                     if (!err) {
                         return res.send(mapping(companies, {id: '_id'}));
                     } else {

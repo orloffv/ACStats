@@ -18,12 +18,12 @@
             events: {type: Number}
         });
 
-        User.statics.findAllCompanies = function(where, callback) {
-            where['additional.companyId'] = {$exists: true};
+        User.statics.findAllCompanies = function(options, callback) {
+            options.where['additional.companyId'] = {$exists: true};
 
             return this.aggregate(
                 {
-                    $match: where
+                    $match: options.where
                 },
                 {
                     $group: {
@@ -37,7 +37,7 @@
                     }
                 },
                 {
-                    $sort: { count: -1 }
+                    $sort: options.sort
                 },
                 callback
             );
