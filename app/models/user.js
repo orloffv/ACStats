@@ -33,7 +33,7 @@
                         hits: {$sum: '$hits'},
                         events: {$sum: '$events'},
                         lastHitAt: {$last: '$lastHitAt'},
-                        createdAt: {$last: '$createdAt'}
+                        createdAt: {$first: '$createdAt'}
                     }
                 },
                 {
