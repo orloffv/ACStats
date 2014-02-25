@@ -30,7 +30,6 @@
             ip: String,
             geoip: {
                 country: String,
-                region: String,
                 city: String,
                 latitude: {type: Number},
                 longitude: {type: Number}
@@ -114,6 +113,7 @@
                 {
                     $group: {
                         _id: "$geoip.city",
+                        country: {$first: "$geoip.country"},
                         count: { $sum: 1 }
                     }
                 },
