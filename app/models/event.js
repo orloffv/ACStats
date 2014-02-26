@@ -35,10 +35,10 @@
             );
         };
 
-        Event.statics.findAllWithGroupByName = function(where, callback) {
+        Event.statics.findAllWithGroupByName = function(options, callback) {
             return this.aggregate(
                 {
-                    $match: where
+                    $match: options.where
                 },
                 {
                     $group: {

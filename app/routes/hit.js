@@ -57,7 +57,7 @@
                 });
             },
             listWithFilerGrouped: function(where, req, res) {
-                return HitProvider.findAllWithGroupByUrl(where, function(err, hits) {
+                return HitProvider.findAllWithGroupByUrl(where, {query:req.query}, function(err, hits) {
                     if (!err) {
                         return res.send(screen(hits, HitProvider.screens.groupedCollection));
                     } else {

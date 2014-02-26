@@ -16,8 +16,8 @@
             findAll: function(where, callback) {
                 EventModel.find(where, callback);
             },
-            findAllWithGroupByName: function(where, callback) {
-                EventModel.findAllWithGroupByName(QueryHelper.getWhere(where), function(err, result) {
+            findAllWithGroupByName: function(where, options, callback) {
+                EventModel.findAllWithGroupByName(QueryHelper.getOptions(where, options), function(err, result) {
                     if (!err) {
                         result = _.map(result, function(item) {
                             item.users = _.size(item.users);

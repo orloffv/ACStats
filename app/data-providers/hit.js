@@ -16,8 +16,8 @@
             findAll: function (where, callback) {
                 HitModel.find(where, callback);
             },
-            findAllWithGroupByUrl: function(where, callback) {
-                HitModel.findAllWithGroupByUrl(QueryHelper.getWhere(where), function(err ,result) {
+            findAllWithGroupByUrl: function(where, options, callback) {
+                HitModel.findAllWithGroupByUrl(QueryHelper.getOptions(where, options), function(err ,result) {
                     if (!err) {
                         result = _.map(result, function(item) {
                             item.users = _.size(item.users);

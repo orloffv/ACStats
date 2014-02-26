@@ -20,6 +20,13 @@
 
         User.statics.findAllCompanies = function(options, callback) {
             options.where['additional.companyId'] = {$exists: true};
+            var createdAt = {};
+
+            if (options.where.createdAt) {
+                createdAt = options.where.createdAt;
+
+                delete options.where.createdAt;
+            }
 
             return this.aggregate(
                 {
@@ -34,6 +41,11 @@
                         events: {$sum: '$events'},
                         lastHitAt: {$last: '$lastHitAt'},
                         createdAt: {$first: '$createdAt'}
+                    }
+                },
+                {
+                    $match: {
+                        createdAt: createdAt
                     }
                 },
                 {

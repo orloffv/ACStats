@@ -53,7 +53,7 @@
                 });
             },
             listWithFilterGrouped: function(where, req, res) {
-                return EventProvider.findAllWithGroupByName(where, function(err, events) {
+                return EventProvider.findAllWithGroupByName(where, {query:req.query}, function(err, events) {
                     if (!err) {
                         return res.send(screen(events, EventProvider.screens.groupedCollection));
                     } else {

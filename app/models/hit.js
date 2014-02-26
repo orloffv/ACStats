@@ -40,10 +40,10 @@
             );
         };
 
-        Hit.statics.findAllWithGroupByUrl = function(where, callback) {
+        Hit.statics.findAllWithGroupByUrl = function(options, callback) {
             return this.aggregate(
                 {
-                    $match: where
+                    $match: options.where
                 },
                 {
                     $group: {
