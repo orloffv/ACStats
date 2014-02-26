@@ -83,12 +83,12 @@
             );
         };
 
-        Session.statics.findBrowsers = function(where, callback) {
-            where.useragent = {$exists: true};
+        Session.statics.findBrowsers = function(options, callback) {
+            options.where.useragent = {$exists: true};
 
             return this.aggregate(
                 {
-                    $match: where
+                    $match: options.where
                 },
                 {
                     $group: {
@@ -99,16 +99,17 @@
                 {
                     $sort: {count: -1 }
                 },
+                options.limit,
                 callback
             );
         };
 
-        Session.statics.findCities = function(where, callback) {
-            where['geoip.city'] = {$exists: true};
+        Session.statics.findCities = function(options, callback) {
+            options.where['geoip.city'] = {$exists: true};
 
             return this.aggregate(
                 {
-                    $match: where
+                    $match: options.where
                 },
                 {
                     $group: {
@@ -120,6 +121,7 @@
                 {
                     $sort: {count: -1 }
                 },
+                options.limit,
                 callback
             );
         };

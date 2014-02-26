@@ -25,11 +25,11 @@
             finUserUserAgents: function(where, limit, callback) {
                 SessionModel.finUserUserAgents(where, limit, callback);
             },
-            findBrowsers: function(where, callback) {
-                SessionModel.findBrowsers(where, callback);
+            findBrowsers: function(options, callback) {
+                SessionModel.findBrowsers(options, callback);
             },
-            findCities: function(where, callback) {
-                SessionModel.findCities(where, callback);
+            findCities: function(options, callback) {
+                SessionModel.findCities(options, callback);
             },
             count: function(where, callback) {
                 SessionModel.count(where, callback);

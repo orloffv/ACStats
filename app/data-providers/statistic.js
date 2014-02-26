@@ -143,10 +143,10 @@
                 SessionProvider.finUserUserAgents(QueryHelper.getWhere(where, options), QueryHelper.getLimit(options), callback);
             },
             countBrowsers: function(where, options, callback) {
-                SessionProvider.findBrowsers(QueryHelper.getWhere(where, options), callback);
+                SessionProvider.findBrowsers(QueryHelper.getOptions(where, options), callback);
             },
             countCities: function(where, options, callback) {
-                SessionProvider.findCities(QueryHelper.getWhere(where, options), callback);
+                SessionProvider.findCities(QueryHelper.getOptions(where, options), callback);
             },
             screens: {
                 models: screenModel
