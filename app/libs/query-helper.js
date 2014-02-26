@@ -37,6 +37,14 @@
                             whereExpressions.createdAt.$lt = moment(options.query.to + ' 23:59:59', "DD-MM-YYYY HH:mm:ss")._d;
                         }
                     }
+
+                    if (options.query.lastHitFrom) {
+                        whereExpressions.lastHitAt = {};
+
+                        if (options.query.lastHitFrom) {
+                            whereExpressions.lastHitAt.$gte = moment(options.query.lastHitFrom, "DD-MM-YYYY")._d;
+                        }
+                    }
                 }
 
                 return whereExpressions;
