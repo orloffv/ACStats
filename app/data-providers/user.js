@@ -14,11 +14,16 @@
             findAll: function(where, options, callback) {
                 var queryOptions = QueryHelper.getOptions(where, options);
                 if (options.query.type === 'active') {
+                    var extendWhere = {};
+                    if (queryOptions.where['additional.companyId']) {
+                        extendWhere['additional.companyId'] = queryOptions.where['additional.companyId'];
+                        delete queryOptions.where['additional.companyId'];
+                    }
                     this.findUserIdsActive(queryOptions.where, function(err, result) {
                         if (err) {
                             callback(err, null);
                         } else {
-                            UserModel.find({_id: {$in: result}}, callback);
+                            UserModel.find(_.extend({_id: {$in: result}}, extendWhere), callback);
                         }
                     });
                 } else {
