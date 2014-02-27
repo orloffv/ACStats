@@ -20,10 +20,10 @@
 
         User.statics.findAllCompanies = function(options, callback) {
             options.where['additional.companyId'] = {$exists: true};
-            var createdAt = {};
+            var matchAfter = {};
 
             if (options.where.createdAt) {
-                createdAt = options.where.createdAt;
+                matchAfter.createdAt = options.where.createdAt;
 
                 delete options.where.createdAt;
             }
@@ -44,9 +44,7 @@
                     }
                 },
                 {
-                    $match: {
-                        createdAt: createdAt
-                    }
+                    $match: matchAfter
                 },
                 {
                     $sort: options.sort

@@ -13,7 +13,17 @@
         UserProvider.prototype = {
             findAll: function(where, options, callback) {
                 var queryOptions = QueryHelper.getOptions(where, options);
-                UserModel.find(queryOptions.where, null, {sort: queryOptions.sort}, callback);
+                if (options.query.type === 'active') {
+                    this.findUserIdsActive(queryOptions.where, function(err, result) {
+                        if (err) {
+                            callback(err, null);
+                        } else {
+                            UserModel.find({_id: {$in: result}}, callback);
+                        }
+                    });
+                } else {
+                    UserModel.find(queryOptions.where, null, {sort: queryOptions.sort}, callback);
+                }
             },
             findByEventHash: function(where, options, callback) {
                 EventModel.findAllWithGroupByUser(QueryHelper.getWhere(where, options), function(err, eventResult) {
@@ -162,7 +172,21 @@
                 });
             },
             findAllCompanies: function(where, options, callback) {
-                UserModel.findAllCompanies(QueryHelper.getOptions(where, options), callback);
+                var queryOptions = QueryHelper.getOptions(where, options);
+
+                if (options.query.type === 'active') {
+                    this.findUserIdsActive(queryOptions.where, function(err, result) {
+                        if (err) {
+                            callback(err, null);
+                        } else {
+                            queryOptions.where = _.extend(queryOptions.where, {_id: {$in: _.map(result, function(userId) {return mongoose.Types.ObjectId(userId);})}});
+                            delete queryOptions.where.createdAt;
+                            UserModel.findAllCompanies(queryOptions, callback);
+                        }
+                    });
+                } else {
+                    UserModel.findAllCompanies(queryOptions, callback);
+                }
             },
             screens: UserModel.screens
         };
