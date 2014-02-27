@@ -116,6 +116,23 @@
                     callback(err, count);
                 });
             },
+            findUserIdsActive: function(where, callback) {
+                async.parallel({
+                    hits: function(cb) {
+                        HitModel.distinct('user', where, cb);
+                    },
+                    events: function(cb) {
+                        EventModel.distinct('user', where, cb);
+                    }
+                }, function(err, result) {
+                    if (err) {
+                        callback(err, null);
+                    } else {
+                        var userIds = _.union(_.map(result.hits, function(hit) {return hit.toString();}), _.map(result.events, function(event) {return event.toString();}));
+                        callback(err, userIds);
+                    }
+                });
+            },
             findUsersActiveByHitsDate: function(where, limit, callback) {
                 HitModel.findActiveUsers(where, limit, function(err, hitResult) {
                     if (!err) {

@@ -8,6 +8,7 @@
         var SessionProvider = require('./session')(mongoose, log);
         var UserProvider = require('./user')(mongoose, log);
         var QueryHelper = require('./../libs/query-helper')(mongoose);
+        var UserModel = mongoose.model('User');
 
         var StatisticProvider = function () {};
 
@@ -22,54 +23,76 @@
 
         StatisticProvider.prototype = {
             countActiveInAllUsersCompaniesByDate: function(where, options, callback) {
-                var toFind = {};
-
-                _.each(['users', 'users_last_hit', 'companies', 'companies_last_hit'], function(modelName) {
-                    var dataProviderFind;
-                    if (modelName === 'users') {
-                        dataProviderFind = UserProvider.countAll;
-                    } else if (modelName === 'users_last_hit') {
-                        dataProviderFind = UserProvider.countByLastHit;
-                    } else if (modelName === 'companies') {
-                        dataProviderFind = UserProvider.countAllCompanies;
-                    } else if (modelName === 'companies_last_hit') {
-                        dataProviderFind = UserProvider.countCompaniesByLastHit;
+                async.parallel({
+                    actveUserIds: function(cb) {
+                        UserProvider.findUserIdsActive(QueryHelper.getWhere(where, options), cb);
+                    },
+                    users: function(cb) {
+                        UserProvider.countAll(QueryHelper.getWhere(where, options), cb);
+                    },
+                    companies: function(cb) {
+                        UserProvider.countAllCompanies(QueryHelper.getWhere(where, options), cb);
                     }
-
-                    if (dataProviderFind) {
-                        toFind[modelName] = function(cb) {
-                            return dataProviderFind(QueryHelper.getWhere(where, options), cb);
-                        };
+                }, function(err, result) {
+                    if (err) {
+                        callback(err, null);
+                    } else {
+                        UserModel.find({_id: {$in: result.actveUserIds}}, 'additional.companyId', function(err, userResult) {
+                            if (err) {
+                                callback(err, null);
+                            } else {
+                                callback(err, {
+                                    users: result.users,
+                                    companies: result.companies,
+                                    users_last_hit: _.size(result.actveUserIds),
+                                    companies_last_hit: _.size(
+                                        _.union(
+                                            _.map(userResult, function(user) {
+                                                return user.additional.companyId;
+                                            })
+                                        )
+                                    )
+                                });
+                            }
+                        });
                     }
                 });
-
-                async.parallel(toFind, callback);
             },
             countUsersCompaniesByDate: function(where, options, callback) {
-                var toFind = {};
-
-                _.each(['users_new', 'users_last_hit', 'companies', 'companies_new'], function(modelName) {
-                    var dataProviderFind;
-                    if (modelName === 'users_new') {
-                        dataProviderFind = UserProvider.count;
-                    } else if (modelName === 'users_last_hit') {
-                        dataProviderFind = UserProvider.countByLastHit;
-                    } else if (modelName === 'companies') {
-                        dataProviderFind = UserProvider.countCompaniesByLastHit;
-                    } else if (modelName === 'companies') {
-                        dataProviderFind = UserProvider.countCompaniesByLastHit;
-                    } else if (modelName === 'companies_new') {
-                        dataProviderFind = UserProvider.countNewCompanies;
+                async.parallel({
+                    actveUserIds: function(cb) {
+                        UserProvider.findUserIdsActive(QueryHelper.getWhere(where, options), cb);
+                    },
+                    users_new: function(cb) {
+                        UserProvider.count(QueryHelper.getWhere(where, options), cb);
+                    },
+                    companies_new: function(cb) {
+                        UserProvider.countNewCompanies(QueryHelper.getWhere(where, options), cb);
                     }
-
-                    if (dataProviderFind) {
-                        toFind[modelName] = function(cb) {
-                            return dataProviderFind(QueryHelper.getWhere(where, options), cb);
-                        };
+                }, function(err, result) {
+                    if (err) {
+                        callback(err, null);
+                    } else {
+                        UserModel.find({_id: {$in: result.actveUserIds}}, 'additional.companyId', function(err, userResult) {
+                            if (err) {
+                                callback(err, null);
+                            } else {
+                                callback(err, {
+                                    users_new: result.users_new,
+                                    companies_new: result.companies_new,
+                                    users: _.size(result.actveUserIds),
+                                    companies: _.size(
+                                        _.union(
+                                            _.map(userResult, function(user) {
+                                                return user.additional.companyId;
+                                            })
+                                        )
+                                    )
+                                });
+                            }
+                        });
                     }
                 });
-
-                async.parallel(toFind, callback);
             },
             findAllGroupByPartDate: function(where, options, callback) {
                 var parts = options.query.parts || 7;

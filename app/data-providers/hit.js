@@ -16,6 +16,9 @@
             findAll: function (where, callback) {
                 HitModel.find(where, callback);
             },
+            findUsers: function(where, callback) {
+                HitModel.distinct('user', where, callback);
+            },
             findAllWithGroupByUrl: function(where, options, callback) {
                 HitModel.findAllWithGroupByUrl(QueryHelper.getOptions(where, options), function(err ,result) {
                     if (!err) {

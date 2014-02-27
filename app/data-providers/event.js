@@ -16,6 +16,9 @@
             findAll: function(where, callback) {
                 EventModel.find(where, callback);
             },
+            findUsers: function(where, callback) {
+                EventModel.distinct('user', where, callback);
+            },
             findAllWithGroupByName: function(where, options, callback) {
                 EventModel.findAllWithGroupByName(QueryHelper.getOptions(where, options), function(err, result) {
                     if (!err) {
