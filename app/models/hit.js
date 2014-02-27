@@ -71,11 +71,24 @@
                     $match: where
                 },
                 {
+                    $project: {
+                        hitDivision: {$divide: [1, '$timing.loadHit']},
+                        url: 1,
+                        timingLoadHit: '$timing.loadHit'
+                    }
+                },
+                {
                     $group: {
                         _id: '$url',
                         count: { $sum: 1 },
-                        loadHit: {$sum: "$timing.loadHit"},
-                        avg: {$avg: "$timing.loadHit"}
+                        sumHitDivision: {$sum: "$hitDivision"}
+                    }
+                },
+                {
+                    $project: {
+                        avg: {$divide: ['$count', '$sumHitDivision']},
+                        url: 1,
+                        count: 1
                     }
                 },
                 {

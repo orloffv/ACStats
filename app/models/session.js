@@ -150,11 +150,15 @@
                     var timing = {loadPage: 0, loadSecurity: 0, loadJS: 0, count: 0};
 
                     values.forEach(function(v) {
-                        timing.loadPage += v.loadPage;
-                        timing.loadSecurity += v.loadSecurity;
-                        timing.loadJS += v.loadJS;
+                        timing.loadPage += 1 / v.loadPage;
+                        timing.loadSecurity += 1 / v.loadSecurity;
+                        timing.loadJS += 1 / v.loadJS;
                         timing.count += v.count;
                     });
+
+                    timing.loadPage = values.length / timing.loadPage;
+                    timing.loadSecurity = values.length / timing.loadSecurity;
+                    timing.loadJS = values.length / timing.loadJS;
 
                     return timing;
                 },
