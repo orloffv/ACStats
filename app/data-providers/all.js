@@ -42,8 +42,11 @@
                                     }
 
                                     var createdAt = dateHelper.getCreatedAt(timestamp, item.createdTimestamp, currentTimestamp);
+                                    if (dataProviderSave) {
+                                        return dataProviderSave(_.extend(item, {createdAt: createdAt}), cb);
+                                    }
 
-                                    return dataProviderSave(_.extend(item, {createdAt: createdAt}), cb);
+                                    return cb();
                                 }
                             );
                         });

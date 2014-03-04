@@ -24,7 +24,7 @@
                 return res.send({ error: 'Bad Request' });
             } else {
                 res.statusCode = 500;
-                log.error('Internal error(%d): %s', res.statusCode, err.message);
+                log.error('Internal error(%d): %s', res.statusCode, err.message, err);
 
                 return res.send({error: 'Server error'});
             }
