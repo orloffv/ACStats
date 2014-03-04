@@ -5,6 +5,7 @@
         var async      = require('async');
         var validate = require('jsonschema').validate;
         var HitProvider = require('./hit')(mongoose, log);
+        var TimeProvider = require('./time')(mongoose, log);
         var EventProvider = require('./event')(mongoose, log);
         var SessionProvider = require('./session')(mongoose, log);
         var dateHelper = require('./../libs/date-helper')();
@@ -36,6 +37,8 @@
                                         dataProviderSave = EventProvider.save;
                                     } else if (modelName === 'hits') {
                                         dataProviderSave = HitProvider.save;
+                                    } else if (modelName === 'times') {
+                                        dataProviderSave = TimeProvider.save;
                                     } else if (modelName === 'sessions') {
                                         item = _.extend(item, {useragent: options.useragent, ip: options.ip});
                                         dataProviderSave = SessionProvider.save;
@@ -101,6 +104,11 @@
                         }
                     ],
                     sessions: [
+                        {
+                            id: true
+                        }
+                    ],
+                    times: [
                         {
                             id: true
                         }
