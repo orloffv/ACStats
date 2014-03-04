@@ -4,6 +4,7 @@
         var _   = require('underscore');
         var async = require('async');
         var HitProvider = require('./hit')(mongoose, log);
+        var TimeProvider = require('./time')(mongoose, log);
         var EventProvider = require('./event')(mongoose, log);
         var SessionProvider = require('./session')(mongoose, log);
         var UserProvider = require('./user')(mongoose, log);
@@ -155,6 +156,9 @@
             },
             findHitSlowestByDate: function(where, options, callback) {
                 HitProvider.findHitSlowestByDate(QueryHelper.getWhere(where, options), QueryHelper.getLimit(options), callback);
+            },
+            findTimeSlowestByDate: function(where, options, callback) {
+                TimeProvider.findTimeSlowestByDate(QueryHelper.getWhere(where, options), QueryHelper.getLimit(options), callback);
             },
             findEventPopularByDate: function(where, options, callback) {
                 EventProvider.findEventPopularByDate(QueryHelper.getWhere(where, options), QueryHelper.getLimit(options), callback);

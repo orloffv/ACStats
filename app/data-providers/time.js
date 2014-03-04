@@ -12,6 +12,9 @@
         var TimeProvider = function () {};
 
         TimeProvider.prototype = {
+            findTimeSlowestByDate: function(where, limit, callback) {
+                TimeModel.findTimeSlowestByDate(where, limit, callback);
+            },
             save: function (time, callback) {
                 var timeValidate = validate(time, TimeSchema);
                 if (!_.size(timeValidate.errors)) {
