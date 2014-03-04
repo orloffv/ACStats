@@ -31,12 +31,13 @@
                     $project: {
                         hitDivision: {$divide: [1, '$timing.load']},
                         url: 1,
+                        method: 1,
                         timingLoadHit: '$timing.load'
                     }
                 },
                 {
                     $group: {
-                        _id: '$url',
+                        _id: {url: '$url', method: '$method'},
                         count: { $sum: 1 },
                         sumHitDivision: {$sum: "$hitDivision"}
                     }
@@ -44,7 +45,6 @@
                 {
                     $project: {
                         avg: {$divide: ['$count', '$sumHitDivision']},
-                        url: 1,
                         count: 1
                     }
                 },

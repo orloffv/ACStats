@@ -48,7 +48,7 @@
             timeSlowestByDate: function(req, res) {
                 return StatisticProvider.findTimeSlowestByDate({server: req.params.id}, {query :req.query}, function(err, statistics) {
                     if (!err) {
-                        return res.send(mapping(statistics, {url: '_id'}));
+                        return res.send(mapping(statistics, {route: '_id'}));
                     } else {
                         return errorHelper(err, res);
                     }
