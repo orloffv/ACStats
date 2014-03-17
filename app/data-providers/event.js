@@ -7,6 +7,7 @@
         var EventModel = mongoose.model('Event');
         var ServerProvider = require('./server')(mongoose, log);
         var UserProvider = require('./user')(mongoose, log);
+        var SessionProvider = require('./session')(mongoose, log);
         var EventSchema = require('./schemas/event.json');
         var QueryHelper = require('./../libs/query-helper')(mongoose);
 
@@ -48,43 +49,63 @@
                 if (!_.size(eventValidate.errors)) {
                     ServerProvider.findOrCreate(event.server.name, function(err, server, serverCreated) {
                         UserProvider.findOrCreate(event.user.name, server.id, {additional: event.user.additional, createdAt: event.createdAt}, function(err, user, userCreated) {
-                            event.server = server.id;
-                            event.user = user.id;
+                            SessionProvider.findOrCreate(event.session, {server: server.id, user: user.id}, function(err, session, sessionCreated) {
+                                event.server = server.id;
+                                event.user = user.id;
 
-                            new EventModel(event).save(function (err, event) {
-                                if (!err) {
-                                    var toSave = {};
+                                new EventModel(event).save(function (err, event) {
+                                    if (!err) {
+                                        var toSave = {};
 
-                                    if (_.isNumber(user.events)) {
-                                        user.events++;
-                                    } else {
-                                        user.events = 1;
-                                    }
-
-                                    toSave.user = function(callback) {
-                                        user.save(callback);
-                                    };
-
-                                    if (serverCreated || userCreated) {
-                                        if (_.isNumber(server.users)) {
-                                            server.users++;
+                                        if (_.isNumber(session.events)) {
+                                            session.events++;
                                         } else {
-                                            server.users = 1;
+                                            session.events = 1;
                                         }
 
-                                        toSave.server = function(callback) {
-                                            server.save(callback);
+                                        if (userCreated) {
+                                            if (_.isNumber(session.users)) {
+                                                session.users++;
+                                            } else {
+                                                session.users = 1;
+                                            }
+                                        }
+
+                                        toSave.session = function(callback) {
+                                            session.save(callback);
                                         };
-                                    }
 
-                                    async.parallel(toSave,
-                                        function(e, r) {
-                                            callback(err, event);
+                                        if (_.isNumber(user.events)) {
+                                            user.events++;
+                                        } else {
+                                            user.events = 1;
                                         }
-                                    );
-                                } else {
-                                    callback(err, event);
-                                }
+
+                                        toSave.user = function(callback) {
+                                            user.save(callback);
+                                        };
+
+                                        if (serverCreated || userCreated) {
+                                            if (_.isNumber(server.users)) {
+                                                server.users++;
+                                            } else {
+                                                server.users = 1;
+                                            }
+
+                                            toSave.server = function(callback) {
+                                                server.save(callback);
+                                            };
+                                        }
+
+                                        async.parallel(toSave,
+                                            function(e, r) {
+                                                callback(err, event);
+                                            }
+                                        );
+                                    } else {
+                                        callback(err, event);
+                                    }
+                                });
                             });
                         });
                     });

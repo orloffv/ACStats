@@ -34,16 +34,15 @@
             count: function(where, callback) {
                 SessionModel.count(where, callback);
             },
-            findOrCreate: function(sessionId, serverId, userId, callback) {
-                SessionModel.findOrCreate({id: sessionId}, {server: serverId, user: userId}, callback);
+            findOrCreate: function(sessionId, updateOptions, callback) {
+                SessionModel.findOrCreate({id: sessionId}, updateOptions, callback);
             },
             save: function (session, callback) {
                 ServerProvider.findOrCreate(session.server.name, function(err, server, serverCreated) {
                     UserProvider.findOrCreate(session.user.name, server.id, {additional: session.user.additional, createdAt: session.createdAt}, function(err, user, userCreated) {
                         session.server = server.id;
                         session.user = user.id;
-
-                        new SessionModel(session).save(function (err, session) {
+                        SessionModel.findOrCreate(session.id, session, function(err, session, sessionCreated) {
                             if (!err) {
                                 var toSave = {};
 
