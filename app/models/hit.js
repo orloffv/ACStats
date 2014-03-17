@@ -13,8 +13,7 @@
             additional: Schema.Types.Mixed,
             timing: Schema.Types.Mixed,
             user: {type: Schema.Types.ObjectId, ref: 'User'},
-            server: {type: Schema.Types.ObjectId, ref: 'Server'},
-            session: {type: Schema.Types.ObjectId, ref: 'Session'}
+            server: {type: Schema.Types.ObjectId, ref: 'Server'}
         });
 
         Hit.virtual('timestamp').get(function() {
