@@ -21,6 +21,8 @@
             timing: Schema.Types.Mixed,
             user: {type: Schema.Types.ObjectId, ref: 'User'},
             server: {type: Schema.Types.ObjectId, ref: 'Server'},
+            hits: {type: Number},
+            events: {type: Number},
             useragent: {
                 Browser: String,
                 Version: String,
@@ -37,7 +39,7 @@
         });
 
         Session.pre('save', function (next) {
-            if (this.ip && geoipCity) {
+            if (this.ip && (this.geoip && !this.geoip.country) && geoipCity) {
                 var geoIPResult = geoipCity.lookupSync(this.ip);
                 if (geoIPResult) {
                     this.geoip = {
