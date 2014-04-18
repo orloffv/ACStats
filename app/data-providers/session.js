@@ -35,7 +35,7 @@
                 SessionModel.count(where, callback);
             },
             findOrCreate: function(sessionId, updateOptions, callback) {
-                SessionModel.findOrCreate({id: sessionId}, updateOptions, callback);
+                SessionModel.findOrCreate({id: mongoose.Types.ObjectId(sessionId)}, updateOptions, callback);
             },
             save: function (session, callback) {
                 ServerProvider.findOrCreate(session.server.name, function(err, server, serverCreated) {
