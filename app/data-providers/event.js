@@ -52,6 +52,7 @@
                             SessionProvider.findOrCreate(event.session, {server: server.id, user: user.id}, function(err, session, sessionCreated) {
                                 event.server = server.id;
                                 event.user = user.id;
+                                event.session = session.id;
 
                                 new EventModel(event).save(function (err, event) {
                                     if (!err) {
@@ -61,14 +62,6 @@
                                             session.events++;
                                         } else {
                                             session.events = 1;
-                                        }
-
-                                        if (userCreated) {
-                                            if (_.isNumber(session.users)) {
-                                                session.users++;
-                                            } else {
-                                                session.users = 1;
-                                            }
                                         }
 
                                         toSave.session = function(callback) {
