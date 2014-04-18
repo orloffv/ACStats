@@ -120,7 +120,7 @@
 
                 toSave = _.map(hits, function(hit) {
                     return function(cb) {
-                        return that.save(hit, cb);
+                        return that.save.call(that, hit, cb);
                     };
                 });
 

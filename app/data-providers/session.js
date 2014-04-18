@@ -35,14 +35,15 @@
                 SessionModel.count(where, callback);
             },
             findOrCreate: function(sessionId, updateOptions, callback) {
-                SessionModel.findOrCreate({id: mongoose.Types.ObjectId(sessionId)}, updateOptions, callback);
+                SessionModel.findOrCreate({_id: mongoose.Types.ObjectId(sessionId)}, updateOptions, callback);
             },
             save: function (session, callback) {
+                var that = this;
                 ServerProvider.findOrCreate(session.server.name, function(err, server, serverCreated) {
                     UserProvider.findOrCreate(session.user.name, server.id, {additional: session.user.additional, createdAt: session.createdAt}, function(err, user, userCreated) {
                         session.server = server.id;
                         session.user = user.id;
-                        SessionModel.findOrCreate(session.id, session, function(err, session, sessionCreated) {
+                        that.findOrCreate(session.id, session, function(err, session, sessionCreated) {
                             if (!err) {
                                 var toSave = {};
 
@@ -94,7 +95,7 @@
                     session = _.extend(session, {useragent: options.useragent, ip: options.ip});
 
                     return function(cb) {
-                        return that.save(session, cb);
+                        return that.save.call(that, session, cb);
                     };
                 });
 

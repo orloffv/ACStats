@@ -117,7 +117,7 @@
 
                 toSave = _.map(events, function(event) {
                     return function(cb) {
-                        return that.save(event, cb);
+                        return that.save.call(that, event, cb);
                     };
                 });
 

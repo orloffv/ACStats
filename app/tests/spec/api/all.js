@@ -337,6 +337,51 @@
                             });
                     });
             });
+
+            it('POST /api/all should successfully save 2 event & 2 hit & 1 session(sessionId defined)', function (done) {
+                var sessionId = '530c11e0ab663db900000000';
+                request(app)
+                    .post('/api/all')
+                    .send({
+                        events: [
+                            _.extend(exampleEvent(), {session: sessionId}),
+                            _.extend(exampleEvent(), {session: sessionId})
+                        ],
+                        hits: [
+                            _.extend(exampleHit(), {session: sessionId}),
+                            _.extend(exampleHit(), {session: sessionId})
+                        ],
+                        sessions: [
+                            _.extend(exampleSession(), {id: sessionId})
+                        ]
+                    })
+                    .expect(201)
+                    .end(function(err, res) {
+                        if (err) {
+                            return done(err);
+                        }
+
+                        assert(res.body.sessions.length === 1);
+                        assert(res.body.events.length === 2);
+                        assert(res.body.hits.length === 2);
+                        assert(res.body.events[0].id);
+                        assert(res.body.events[1].id);
+                        assert(res.body.hits[0].id);
+                        assert(res.body.hits[1].id);
+                        request(app)
+                            .get('/api/sessions')
+                            .expect(200)
+                            .end(function(err, res) {
+                                if (err) {
+                                    return done(err);
+                                }
+
+                                assert(res.body.length === 1);
+                                assert(res.body[0].id === sessionId);
+                                done();
+                            });
+                    });
+            });
         });
     };
 })();

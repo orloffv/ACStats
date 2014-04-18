@@ -32,21 +32,21 @@
                         _.each(items, function(item) {
                             toSave[modelName].push(
                                 function(cb) {
-                                    var dataProviderSave;
+                                    var dataProvider;
                                     if  (modelName === 'events') {
-                                        dataProviderSave = EventProvider.save;
+                                        dataProvider = EventProvider;
                                     } else if (modelName === 'hits') {
-                                        dataProviderSave = HitProvider.save;
+                                        dataProvider = HitProvider;
                                     } else if (modelName === 'times') {
-                                        dataProviderSave = TimeProvider.save;
+                                        dataProvider = TimeProvider;
                                     } else if (modelName === 'sessions') {
                                         item = _.extend(item, {useragent: options.useragent, ip: options.ip});
-                                        dataProviderSave = SessionProvider.save;
+                                        dataProvider = SessionProvider;
                                     }
 
                                     var createdAt = dateHelper.getCreatedAt(timestamp, item.createdTimestamp, currentTimestamp);
-                                    if (dataProviderSave) {
-                                        return dataProviderSave(_.extend(item, {createdAt: createdAt}), cb);
+                                    if (dataProvider) {
+                                        return dataProvider.save.call(dataProvider, _.extend(item, {createdAt: createdAt}), cb);
                                     }
 
                                     return cb();

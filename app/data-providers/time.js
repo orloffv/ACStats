@@ -65,7 +65,7 @@
 
                 toSave = _.map(times, function(time) {
                     return function(cb) {
-                        return that.save(time, cb);
+                        return that.save.call(that, time, cb);
                     };
                 });
 
