@@ -377,7 +377,7 @@
                                 }
 
                                 assert(res.body.length === 1);
-                                assert(res.body[0].id === sessionId);
+                                assert(res.body[0].sessionClientId === sessionId);
                                 done();
                             });
                     });

@@ -35,7 +35,8 @@
                 city: String,
                 latitude: {type: Number},
                 longitude: {type: Number}
-            }
+            },
+            sessionClientId: {type: Schema.Types.ObjectId}
         });
 
         Session.pre('save', function (next) {
@@ -186,7 +187,12 @@
             additional: true,
             timing: true,
             user: true,
-            server: true
+            server: true,
+            geoip: true,
+            useragent: true,
+            hits: true,
+            events: true,
+            sessionClientId: true
         };
 
         SessionModel.screens = {

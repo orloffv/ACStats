@@ -44,7 +44,7 @@
                 });
             },
             listWithFilter: function(where, req, res) {
-                return SessionProvider.findAll(where, function(err, sessions) {
+                return SessionProvider.findAll(where, {query: req.query}, function(err, sessions) {
                     if (!err) {
                         return res.send(screen(sessions, SessionProvider.screens.collection));
                     } else {

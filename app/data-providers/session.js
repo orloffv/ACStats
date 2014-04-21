@@ -6,15 +6,18 @@
         var SessionModel = mongoose.model('Session');
         var ServerProvider = require('./server')(mongoose, log);
         var UserProvider = require('./user')(mongoose, log);
+        var QueryHelper = require('./../libs/query-helper')(mongoose);
 
         var SessionProvider = function () {};
 
         SessionProvider.prototype = {
-            findAll: function (where, callback) {
-                SessionModel.find(where).populate('user server').exec(callback);
+            findAll: function (where, options, callback) {
+                var queryOptions = QueryHelper.getOptions(where, options);
+
+                SessionModel.find(queryOptions.where).populate('user').sort(queryOptions.sort).exec(callback);
             },
             getById: function(id, callback) {
-                SessionModel.findById(id).populate('user server').exec(callback);
+                SessionModel.findById(id).populate('user').exec(callback);
             },
             countGroupByPartDate: function(where, parts, callback) {
                 SessionModel.countGroupByPartDate(where, parts, callback);
@@ -35,7 +38,7 @@
                 SessionModel.count(where, callback);
             },
             findOrCreate: function(sessionId, updateOptions, callback) {
-                SessionModel.findOrCreate({_id: mongoose.Types.ObjectId(sessionId)}, updateOptions, callback);
+                SessionModel.findOrCreate({sessionClientId: mongoose.Types.ObjectId(sessionId)}, updateOptions, callback);
             },
             save: function (session, callback) {
                 var that = this;
