@@ -38,6 +38,9 @@
                 SessionModel.count(where, callback);
             },
             findOrCreate: function(sessionId, updateOptions, callback) {
+                if (!sessionId) {
+                    return callback(false, null, false);
+                }
                 delete updateOptions.id;
                 SessionModel.findOrCreate({sessionClientId: mongoose.Types.ObjectId(sessionId)}, updateOptions, callback);
             },

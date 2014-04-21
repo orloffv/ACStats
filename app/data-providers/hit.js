@@ -53,7 +53,9 @@
                             SessionProvider.findOrCreate(hit.session, {server: server.id, user: user.id, useragent: hit.useragent, ip: hit.ip}, function(err, session, sessionCreated) {
                                 hit.server = server.id;
                                 hit.user = user.id;
-                                hit.session = session.id;
+                                if (session) {
+                                    hit.session = session.id;
+                                }
 
                                 new HitModel(hit).save(function (err, hit) {
                                     if (!err) {
@@ -65,15 +67,17 @@
                                             user.hits = 1;
                                         }
 
-                                        if (_.isNumber(session.hits)) {
-                                            session.hits++;
-                                        } else {
-                                            session.hits = 1;
-                                        }
+                                        if (session) {
+                                            if (_.isNumber(session.hits)) {
+                                                session.hits++;
+                                            } else {
+                                                session.hits = 1;
+                                            }
 
-                                        toSave.session = function(callback) {
-                                            session.save(callback);
-                                        };
+                                            toSave.session = function(callback) {
+                                                session.save(callback);
+                                            };
+                                        }
 
                                         user.lastHitAt = new Date();
 

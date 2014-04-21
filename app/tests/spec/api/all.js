@@ -210,6 +210,8 @@
             });
 
             it('POST /api/all should successfully save 5 events & 4 hits & 1 session', function (done) {
+                var sessionId = '530c11e0ab663db800000000';
+
                 request(app)
                     .post('/api/all')
                     .send({
@@ -227,7 +229,7 @@
                             exampleHit()
                         ],
                         sessions: [
-                            exampleSession()
+                            _.extend(exampleEvent(), {id: sessionId})
                         ]
                     })
                     .expect(201)
@@ -378,6 +380,36 @@
 
                                 assert(res.body.length === 1);
                                 assert(res.body[0].sessionClientId === sessionId);
+                                done();
+                            });
+                    });
+            });
+
+            it('POST /api/all should successfully save 1 event(sessionId not defined)', function (done) {
+                request(app)
+                    .post('/api/all')
+                    .send({
+                        events: [
+                            exampleEvent()
+                        ]
+                    })
+                    .expect(201)
+                    .end(function(err, res) {
+                        if (err) {
+                            return done(err);
+                        }
+
+                        assert(res.body.events.length === 1);
+                        assert(res.body.events[0].id);
+                        request(app)
+                            .get('/api/sessions')
+                            .expect(200)
+                            .end(function(err, res) {
+                                if (err) {
+                                    return done(err);
+                                }
+
+                                assert(res.body.length === 0);
                                 done();
                             });
                     });

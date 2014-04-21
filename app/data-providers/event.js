@@ -52,21 +52,24 @@
                             SessionProvider.findOrCreate(event.session, {server: server.id, user: user.id, useragent: event.useragent, ip: event.ip}, function(err, session, sessionCreated) {
                                 event.server = server.id;
                                 event.user = user.id;
-                                event.session = session.id;
+                                if (session) {
+                                    event.session = session.id;
+                                }
 
                                 new EventModel(event).save(function (err, event) {
                                     if (!err) {
                                         var toSave = {};
+                                        if (session) {
+                                            if (_.isNumber(session.events)) {
+                                                session.events++;
+                                            } else {
+                                                session.events = 1;
+                                            }
 
-                                        if (_.isNumber(session.events)) {
-                                            session.events++;
-                                        } else {
-                                            session.events = 1;
+                                            toSave.session = function(callback) {
+                                                session.save(callback);
+                                            };
                                         }
-
-                                        toSave.session = function(callback) {
-                                            session.save(callback);
-                                        };
 
                                         if (_.isNumber(user.events)) {
                                             user.events++;
