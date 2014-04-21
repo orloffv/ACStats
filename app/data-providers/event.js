@@ -49,7 +49,7 @@
                 if (!_.size(eventValidate.errors)) {
                     ServerProvider.findOrCreate(event.server.name, function(err, server, serverCreated) {
                         UserProvider.findOrCreate(event.user.name, server.id, {additional: event.user.additional, createdAt: event.createdAt}, function(err, user, userCreated) {
-                            SessionProvider.findOrCreate(event.session, {server: server.id, user: user.id}, function(err, session, sessionCreated) {
+                            SessionProvider.findOrCreate(event.session, {server: server.id, user: user.id, useragent: event.useragent, ip: event.ip}, function(err, session, sessionCreated) {
                                 event.server = server.id;
                                 event.user = user.id;
                                 event.session = session.id;

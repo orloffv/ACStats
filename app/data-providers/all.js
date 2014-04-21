@@ -34,8 +34,10 @@
                                 function(cb) {
                                     var dataProvider;
                                     if  (modelName === 'events') {
+                                        item = _.extend(item, {useragent: options.useragent, ip: options.ip});
                                         dataProvider = EventProvider;
                                     } else if (modelName === 'hits') {
+                                        item = _.extend(item, {useragent: options.useragent, ip: options.ip});
                                         dataProvider = HitProvider;
                                     } else if (modelName === 'times') {
                                         dataProvider = TimeProvider;

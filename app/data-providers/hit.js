@@ -50,7 +50,7 @@
                 if (!_.size(hitValidate.errors)) {
                     ServerProvider.findOrCreate(hit.server.name, function(err, server, serverCreated) {
                         UserProvider.findOrCreate(hit.user.name, server.id, {additional: hit.user.additional, createdAt: hit.createdAt}, function(err, user, userCreated) {
-                            SessionProvider.findOrCreate(hit.session, {server: server.id, user: user.id}, function(err, session, sessionCreated) {
+                            SessionProvider.findOrCreate(hit.session, {server: server.id, user: user.id, useragent: hit.useragent, ip: hit.ip}, function(err, session, sessionCreated) {
                                 hit.server = server.id;
                                 hit.user = user.id;
                                 hit.session = session.id;
